@@ -4,6 +4,9 @@
 <main>
     <h1 class="margin-block-end:0">Cohortly</h1>
     <p class="margin-block-start:0">Student collaboration and peer tutoring platform for Sydney Boys High School</p>
-    <strong><a class="<big> <button>" href="{% provider_login_url "sbhs" %}">Log in with SBHS Portal</a></strong>
+    <form method="POST" action="{% provider_login_url "sbhs" %}">
+        {% csrf_token %}
+        <strong><button type="submit" class="<big>">Log in with SBHS Portal</button></strong>
+    </form>
 </main>
 {% endblock %}

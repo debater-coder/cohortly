@@ -99,6 +99,9 @@ AUTHENTICATION_BACKENDS = [
     "django.contrib.auth.backends.ModelBackend",
     "allauth.account.auth_backends.AuthenticationBackend",
 ]
+
+SOCIALACCOUNT_ADAPTER = "core.adapter.SocialAccountAdapter"
+
 SOCIALACCOUNT_PROVIDERS = {
     "openid_connect": {
         # Optional PKCE defaults to False, but may be required by your provider

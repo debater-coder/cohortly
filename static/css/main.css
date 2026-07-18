@@ -1,0 +1,13 @@
+:root {
+    /* Disable button shadows */
+    --shadow: none;
+    --shadow-focus: none;
+    --shadow-active: none;
+    --shadow-disabled: none;
+    --pressed-shadow: none;
+    --pressed-shadow-focus: none;
+    --pressed-shadow-active: none;
+    --border-radius: 0.4rem;
+    --interactive-border-radius: 0.4rem;
+    --tab-border-radius: 0.8rem;
+}

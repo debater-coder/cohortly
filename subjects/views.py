@@ -1,4 +1,5 @@
 from django.db.models import Count, Exists, OuterRef
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render
 from django.views.decorators.http import require_POST
 from django.views.generic import DetailView, ListView
@@ -29,6 +30,15 @@ class SubjectDetailView(DetailView):
     model = Subject
     context_object_name = "subject"
 
+    def get_object(self, queryset=None):
+        obj = super().get_object(queryset)
+
+        obj.membership = SubjectMembership.objects.filter(
+            user=self.request.user, subject=obj
+        ).first()
+
+        return obj
+
 
 @require_POST
 def subject_toggle_membership(request, pk):
@@ -39,12 +49,8 @@ def subject_toggle_membership(request, pk):
 
     if not created:
         membership.delete()
-        is_member = False
-    else:
-        is_member = True
 
-    return render(
-        request,
-        "subjects/_membership_button.html",
-        {"subject": subject, "is_member": is_member},
-    )
+    response = HttpResponse()
+    response.headers["HX-Refresh"] = "true"
+
+    return response

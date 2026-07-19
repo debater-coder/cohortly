@@ -1,6 +1,22 @@
 {% extends "layouts/logged_in.html" %}
 {% block content %}
-<main>
     <h1>Subjects</h1>
-</main>
+    {% if subjects %}
+        <a role="button" href="{% url 'subjects:subject-list' %}">Join or leave subjects</a>
+        <div class="subjects-grid">
+            {% for subject in subjects %}
+                <article>
+                    <h5>
+                        <a href="{% url 'subjects:subject-detail' subject.id %}" class="contrast">{{ subject.name }}</a>
+                    </h5>
+                    TODO: subject at a glance
+                </article>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>
+            <a href="{%url 'subjects:subject-list'%}">Join a subject</a> to participate in Q&amp;As, study sessions and
+            more.
+        </p>
+    {% endif %}
 {% endblock %}

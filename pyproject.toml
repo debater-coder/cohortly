@@ -9,3 +9,8 @@ dependencies = [
     "django-allauth[socialaccount]>=65.18.0",
     "django-environ>=0.14.0",
 ]
+
+[dependency-groups]
+dev = [
+    "djangofmt>=0.2.12",
+]

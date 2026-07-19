@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block body %}
+    <main class="container">
+        <nav>
+            <ul>
+                <li><a class="contrast" href="{% url 'dashboard:index' %}"><strong>Cohortly</strong></a></li>
+            </ul>
+            <ul>
+                <li><input type="search" name="search" placeholder="Search" aria-label="Search"></li>
+            </ul>
+            <ul>
+                <li><a href="#" class="secondary">Leaderboard</a></li>
+                <li><a href="#" class="secondary">Inbox</a></li>
+                <li><a href="#" class="secondary">Help center</a></li>
+                <li>
+                    <details class="dropdown">
+                        <summary>Account</summary>
+                        <ul dir="rtl">
+                            <li>
+                                <a href="">Profile</a>
+                            </li>
+                            <li>
+                                <a href="">Settings</a>
+                            </li>
+                            <li><a href="#" hx-post="{% url 'account_logout' %}" hx-target="body">Logout</a></li>
+                        </ul>
+                    </details>
+                </li>
+            </ul>
+        </nav>
+        {% block content %}{% endblock %}
+    </main>
+{% endblock %}

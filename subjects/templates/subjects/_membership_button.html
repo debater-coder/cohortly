@@ -1,0 +1,17 @@
+{% if is_member %}
+    <button
+        class="secondary"
+        hx-post="{% url 'subjects:subject-toggle-membership' subject.pk %}"
+        hx-swap="outerHTML"
+        hx-confirm="Are you sure you want to leave {{subject.name}}?"
+    >
+        Leave
+    </button>
+{% else %}
+    <button
+        hx-post="{% url 'subjects:subject-toggle-membership' subject.pk %}"
+        hx-swap="outerHTML"
+    >
+        Join
+    </button>
+{% endif %}

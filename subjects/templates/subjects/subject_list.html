@@ -1,0 +1,15 @@
+{% extends "layouts/logged_in.html" %}
+
+{% block content %}
+    <div class="subjects-grid">
+        {% for subject in subjects %}
+            <article>
+                <h5>
+                    <a href="{% url 'subjects:subject-detail' subject.id %}" class="contrast">{{ subject.name }}</a>
+                </h5>
+                <p>{{ subject.member_count }} student{{ subject.member_count|pluralize }} joined</p>
+                {% include 'subjects/_membership_button.html' with subject=subject is_member=subject.is_member %}
+            </article>
+        {% endfor %}
+    </div>
+{% endblock %}

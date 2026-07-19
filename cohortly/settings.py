@@ -29,6 +29,10 @@ SECRET_KEY = env("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env("DEBUG")
 
+INTERNAL_IPS = [
+    "127.0.0.1",
+]
+
 ALLOWED_HOSTS = []
 
 # Application definition
@@ -37,11 +41,20 @@ INSTALLED_APPS = [
     # Cohortly
     "core.apps.CoreConfig",
     "dashboard.apps.DashboardConfig",
+    "credits.apps.CreditsConfig",
+    "moderation.apps.ModerationConfig",
+    "notifications.apps.NotificationsConfig",
+    "qa.apps.QaConfig",
+    "resources.apps.ResourcesConfig",
+    "subjects.apps.SubjectsConfig",
+    "tutoring.apps.TutoringConfig",
     # Allauth
     "allauth",
     "allauth.account",
     "allauth.socialaccount",
     "allauth.socialaccount.providers.openid_connect",
+    # Debug toolbar
+    "debug_toolbar",
     # Django
     "django.contrib.admin",
     "django.contrib.auth",
@@ -52,6 +65,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",

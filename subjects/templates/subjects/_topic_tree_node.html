@@ -1,0 +1,10 @@
+<ul>
+    {% for topic in topics %}
+        <li>
+            {{ topic.name }}
+            {% if topic.children.all|length %}
+                {% include "subjects/_topic_tree_node.html" with topics=topic.children.all %}
+            {% endif %}
+        </li>
+    {% endfor %}
+</ul>

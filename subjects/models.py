@@ -27,3 +27,16 @@ class SubjectMembership(models.Model):
                 fields=["user", "subject"], name="unique_user_subject"
             )
         ]
+
+
+class Topic(models.Model):
+    name = models.CharField(max_length=200)
+    description = models.CharField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
+    parent = models.ForeignKey(
+        "self", on_delete=models.CASCADE, null=True, blank=True, related_name="children"
+    )
+
+    def __str__(self) -> str:
+        return self.name

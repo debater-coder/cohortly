@@ -1,0 +1,17 @@
+{% extends "layouts/logged_in.html" %}
+
+{% block content %}
+    <nav aria-label="breadcrumb">
+        <ul>
+            <li><a href="/dashboard/">Home</a></li>
+            <li><a href="{% url 'subjects:subject-list' %}">Subjects</a></li>
+            <li><a href="{% url 'subjects:subject-detail' subject.id %}">{{ subject.name }}</a></li>
+            <li>Topics</li>
+        </ul>
+    </nav>
+    {% include "subjects/_topic_tree_node.html" %}
+    {% if membership.moderator %}
+        <h2>Moderator options</h2>
+        <a role="button" href="{% url 'subjects:topic-create' subject.id %}">Create new topic</a>
+    {% endif %}
+{% endblock %}

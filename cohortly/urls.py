@@ -25,4 +25,5 @@ urlpatterns = [
     path("accounts/", include("allauth.urls")),
     path("subjects/", include("subjects.urls")),
     path("admin/", admin.site.urls),
+    path("markdownx/", include("markdownx.urls")),
 ] + debug_toolbar_urls()

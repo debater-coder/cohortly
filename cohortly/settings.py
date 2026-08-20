@@ -48,6 +48,8 @@ INSTALLED_APPS = [
     "resources.apps.ResourcesConfig",
     "subjects.apps.SubjectsConfig",
     "tutoring.apps.TutoringConfig",
+    # Markdownx
+    "markdownx",
     # Tom Select
     "django_tomselect",
     # Allauth
@@ -184,3 +186,10 @@ STATIC_URL = "static/"
 STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
+
+MARKDOWNX_MARKDOWNIFY_FUNCTION = "cohortly.markdown_utils.safe_markdownify"
+MARKDOWNX_UPLOAD_CONTENT_TYPES = [
+    "image/jpeg",
+    "image/png",
+    "image/gif",
+]  # SVG banned due to XSS potential

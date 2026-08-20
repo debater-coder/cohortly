@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.db import models
+from markdownx.models import MarkdownxField
 
 
 class Subject(models.Model):
@@ -31,7 +32,7 @@ class SubjectMembership(models.Model):
 
 class Topic(models.Model):
     name = models.CharField(max_length=200)
-    description = models.CharField(blank=True)
+    description = MarkdownxField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
     parent = models.ForeignKey(

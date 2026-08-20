@@ -19,7 +19,7 @@
     </nav>
     {% if topic %}
         <h1>{{ topic.name }}</h1>
-        <p>{{ topic.description }}</p>
+        <p>{{ content|safe }}</p>
     {% endif %}
     <h2>Subtopics</h2>
     {% include "subjects/_topic_tree_node.html" %}

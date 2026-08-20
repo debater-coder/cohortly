@@ -1,5 +1,6 @@
 from typing import override
 
+import nh3
 from django import forms
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth.mixins import UserPassesTestMixin
@@ -15,7 +16,9 @@ from django.views.generic import CreateView, DetailView, ListView
 from django_tomselect.app_settings import Const, TomSelectConfig
 from django_tomselect.autocompletes import AutocompleteModelView
 from django_tomselect.forms import TomSelectModelChoiceField
+from markdownx.utils import markdownify
 
+from cohortly.markdown_utils import safe_markdownify
 from subjects.models import Subject, SubjectMembership, Topic
 from subjects.utils import get_topic_lookup, get_topic_path, is_moderator
 
@@ -141,6 +144,7 @@ def topic_detail_view(request, subject_pk, topic_pk):
             "topics": topics,
             "topic_path": path,
             "topic": topic,
+            "content": safe_markdownify(topic.description),
         },
     )
 

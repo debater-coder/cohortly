@@ -6,12 +6,42 @@
             <li><a href="/dashboard/">Home</a></li>
             <li><a href="{% url 'subjects:subject-list' %}">Subjects</a></li>
             <li><a href="{% url 'subjects:subject-detail' subject.id %}">{{ subject.name }}</a></li>
-            <li>Topics</li>
+            {% if topic_path %}
+                <li><a href="{% url 'subjects:topic-list' subject.id %}">Topics</a></li>
+                {% for segment in topic_path|slice:":-1" %}
+                    <li><a href="{% url 'subjects:topic-detail' subject.id segment.id %}">{{ segment.name }}</a></li>
+                {% endfor %}
+                <li>{{ topic.name }}</li>
+            {% else %}
+                <li>Topics</li>
+            {% endif %}
         </ul>
     </nav>
+    {% if topic %}
+        <h1>{{ topic.name }}</h1>
+        <p>{{ topic.description }}</p>
+    {% endif %}
+    <h2>Subtopics</h2>
     {% include "subjects/_topic_tree_node.html" %}
+
     {% if membership.moderator %}
         <h2>Moderator options</h2>
-        <a role="button" href="{% url 'subjects:topic-create' subject.id %}">Create new topic</a>
+        {% if topic %}
+            <p>
+                <a role="button" href="{% url 'subjects:topic-edit' subject.id topic.id %}">Edit this topic</a>
+                <button
+                    class="secondary"
+                    hx-post="{% url 'subjects:topic-delete' subject.id topic.id %}"
+                    hx-swap="outerHTML"
+                    hx-confirm="Are you sure you want to delete {{topic.name}}?"
+                >
+                    Delete this topic
+                </button>
+            </p>
+        {% endif %}
+        <p>
+            <a role="button" href="{% url 'subjects:topic-create' subject.id %}">Create new topic</a>
+            <a role="button" href="{% url 'subjects:topic-create' subject.id %}">Reorder these topics</a>
+        </p>
     {% endif %}
 {% endblock %}

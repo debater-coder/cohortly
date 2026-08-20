@@ -14,9 +14,24 @@ urlpatterns = [
     ),
     path("<int:subject_pk>/topics", views.topic_list_view, name="topic-list"),
     path(
+        "<int:subject_pk>/topics/<int:topic_pk>",
+        views.topic_detail_view,
+        name="topic-detail",
+    ),
+    path(
         "<int:subject_pk>/topics/create",
         views.topic_create_view,
         name="topic-create",
+    ),
+    path(
+        "<int:subject_pk>/topics/delete/<topic_pk>",
+        views.topic_delete,
+        name="topic-delete",
+    ),
+    path(
+        "<int:subject_pk>/topics/edit/<topic_pk>",
+        views.topic_edit_view,
+        name="topic-edit",
     ),
     path(
         "autocomplete/topics",

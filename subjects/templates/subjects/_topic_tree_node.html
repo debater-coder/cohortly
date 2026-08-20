@@ -1,10 +1,12 @@
 <ul>
     {% for topic in topics %}
         <li>
-            {{ topic.name }}
+            <a href="{% url 'subjects:topic-detail' subject.id topic.id %}">{{ topic.name }}</a>
             {% if topic.children.all|length %}
                 {% include "subjects/_topic_tree_node.html" with topics=topic.children.all %}
             {% endif %}
         </li>
+    {% empty %}
+        <p>This topic has no subtopics</p>
     {% endfor %}
 </ul>

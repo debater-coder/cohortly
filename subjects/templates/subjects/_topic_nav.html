@@ -1,0 +1,16 @@
+<nav aria-label="breadcrumb">
+    <ul>
+        <li><a href="/dashboard/">Home</a></li>
+        <li><a href="{% url 'subjects:subject-list' %}">Subjects</a></li>
+        <li><a href="{% url 'subjects:subject-detail' subject.id %}">{{ subject.name }}</a></li>
+        {% if topic_path %}
+            <li><a href="{% url 'subjects:topic-list' subject.id %}">Topics</a></li>
+            {% for segment in topic_path|slice:":-1" %}
+                <li><a href="{% url 'subjects:topic-detail' subject.id segment.id %}">{{ segment.name }}</a></li>
+            {% endfor %}
+            <li>{{ topic.name }}</li>
+        {% else %}
+            <li>Topics</li>
+        {% endif %}
+    </ul>
+</nav>

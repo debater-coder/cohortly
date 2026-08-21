@@ -34,6 +34,11 @@ urlpatterns = [
         name="topic-edit",
     ),
     path(
+        "<int:subject_pk>/topics/reorder",
+        views.topic_reorder_view,
+        name="topic-reorder",
+    ),
+    path(
         "autocomplete/topics",
         views.TopicAutocompleteView.as_view(),
         name="autocomplete-topic",

@@ -16,7 +16,7 @@ def is_moderator(view_func):
         if membership and membership.moderator:
             return view_func(request, *args, subject_pk=subject_pk, **kwargs)
 
-        raise PermissionDenied()
+        raise PermissionDenied("You must be a moderator to perform this action")
 
     return wrap
 

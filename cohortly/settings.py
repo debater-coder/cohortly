@@ -48,6 +48,9 @@ INSTALLED_APPS = [
     "resources.apps.ResourcesConfig",
     "subjects.apps.SubjectsConfig",
     "tutoring.apps.TutoringConfig",
+    # Htmx
+    "django_htmx",
+    "template_partials",
     # Markdownx
     "markdownx",
     # Tom Select
@@ -69,6 +72,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    "django_htmx.middleware.HtmxMiddleware",
     "django_tomselect.middleware.TomSelectMiddleware",
     "debug_toolbar.middleware.DebugToolbarMiddleware",
     "django.middleware.security.SecurityMiddleware",

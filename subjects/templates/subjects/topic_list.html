@@ -1,22 +1,7 @@
 {% extends "layouts/logged_in.html" %}
 
 {% block content %}
-    <nav aria-label="breadcrumb">
-        <ul>
-            <li><a href="/dashboard/">Home</a></li>
-            <li><a href="{% url 'subjects:subject-list' %}">Subjects</a></li>
-            <li><a href="{% url 'subjects:subject-detail' subject.id %}">{{ subject.name }}</a></li>
-            {% if topic_path %}
-                <li><a href="{% url 'subjects:topic-list' subject.id %}">Topics</a></li>
-                {% for segment in topic_path|slice:":-1" %}
-                    <li><a href="{% url 'subjects:topic-detail' subject.id segment.id %}">{{ segment.name }}</a></li>
-                {% endfor %}
-                <li>{{ topic.name }}</li>
-            {% else %}
-                <li>Topics</li>
-            {% endif %}
-        </ul>
-    </nav>
+    {% include "subjects/_topic_nav.html" %}
     {% if topic %}
         <h1>{{ topic.name }}</h1>
         <p>{{ content|safe }}</p>
@@ -41,7 +26,10 @@
         {% endif %}
         <p>
             <a role="button" href="{% url 'subjects:topic-create' subject.id %}">Create new topic</a>
-            <a role="button" href="{% url 'subjects:topic-create' subject.id %}">Reorder these topics</a>
+            <a
+                role="button"
+                href="{% url 'subjects:topic-reorder' subject.id %}{% if topic %}?parent={{topic.id}}{% endif %}"
+            >Reorder these topics</a>
         </p>
     {% endif %}
 {% endblock %}

@@ -123,7 +123,9 @@ dependencies = [
     { name = "django-allauth", extra = ["socialaccount"] },
     { name = "django-debug-toolbar" },
     { name = "django-environ" },
+    { name = "django-htmx" },
     { name = "django-markdownx" },
+    { name = "django-template-partials" },
     { name = "django-tomselect" },
     { name = "nh3" },
 ]
@@ -139,7 +141,9 @@ requires-dist = [
     { name = "django-allauth", extras = ["socialaccount"], specifier = ">=65.18.0" },
     { name = "django-debug-toolbar", specifier = ">=7.0.0" },
     { name = "django-environ", specifier = ">=0.14.0" },
+    { name = "django-htmx", specifier = ">=1.29.0" },
     { name = "django-markdownx", specifier = ">=4.0.11" },
+    { name = "django-template-partials", specifier = ">=25.3" },
     { name = "django-tomselect", specifier = ">=2026.6.2" },
     { name = "nh3", specifier = ">=0.3.6" },
 ]
@@ -254,6 +258,19 @@ wheels = [
 ]
 
 [[package]]
+name = "django-htmx"
+version = "1.29.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "asgiref" },
+    { name = "django" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/66/cc/b0619004ed73a4a2bfa50d14b00a8228407b01994df73613584523ab3056/django_htmx-1.29.0.tar.gz", hash = "sha256:337dfa35b8da13fd68bf968f2b9cc9a4144a4e71f06c204d7ff10f7343988102", size = 204340, upload-time = "2026-08-05T23:42:09.457Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/ec/72/1f5f35d719b355e5c051378ae4859586f59c9db08708f02fea358376c130/django_htmx-1.29.0-py3-none-any.whl", hash = "sha256:0ec5be1645ed71e6787bd75e0250624f00274ac3bb1730f07b6629a95688929b", size = 224954, upload-time = "2026-08-05T23:42:08.142Z" },
+]
+
+[[package]]
 name = "django-markdownx"
 version = "4.0.11"
 source = { registry = "https://pypi.org/simple" }
@@ -265,6 +282,18 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/fb/b0/0e453f0d2277b64746063204cad9c82bb79bde76364dc038aeb3b7b71faf/django_markdownx-4.0.11.tar.gz", hash = "sha256:0f2a4552174af98b621522eb36c8d1009a7f73d2bf591d973a34fc65cc740680", size = 36260, upload-time = "2026-05-23T14:19:24.599Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/06/84/c8b963d092132fae8e6436179a015d769b735b15b9400f10b02c0d525ebe/django_markdownx-4.0.11-py2.py3-none-any.whl", hash = "sha256:65d32d8892a3f9d678b149b7a0c3a073db6c6c10955df1c4f453b38eb96d163e", size = 46172, upload-time = "2026-05-23T14:19:23.194Z" },
+]
+
+[[package]]
+name = "django-template-partials"
+version = "25.3"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "django" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/b0/2e/957ee4a6ee0a7d46a18676ba8b01d762ef89d00b7769cc532853f9f989e1/django_template_partials-25.3.tar.gz", hash = "sha256:6d11f7bb049ce3032e6fe3331137b771e34239ce1af18c55ef6a9b667cf2ef36", size = 18052, upload-time = "2025-11-14T08:27:21.917Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/9b/9d/48f8721e48b938ca2e2dde577986624543be6ff9bdccac20ccb747be4287/django_template_partials-25.3-py2.py3-none-any.whl", hash = "sha256:a19334934cf40e4e1218802a4ddfdf22b8f78cc5a0b8c75a18b97e6ea4f3c108", size = 9702, upload-time = "2025-11-14T08:27:20.243Z" },
 ]
 
 [[package]]

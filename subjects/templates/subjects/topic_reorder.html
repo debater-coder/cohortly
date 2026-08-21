@@ -1,0 +1,65 @@
+{% extends "layouts/logged_in.html" %}
+{% load static %}
+{% load partials %}
+{% block extra_head %}
+    {{ block.super }}
+    <script src="{% static 'js/sortable.min.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+    {% include "subjects/_topic_nav.html" %}
+    <h2>Reorder subtopics</h2>
+    <p>Drag items to reorder. Changes are applied immediately.</p>
+    {% if topics %}
+        <form
+            class="sortable"
+            hx-post="{% url 'subjects:topic-reorder' subject.id %}{% if topic %}?parent={{topic.id}}{% endif %}"
+            hx-trigger="end"
+        >
+            {% partialdef topics inline %}
+                <div class="htmx-indicator">Updating...</div>
+                {% for topic in topics %}
+                    <article class="draggable">
+                        <input type="hidden" name="item" value="{{topic.id}}">{{ topic.name }}
+                    </article>
+                {% endfor %}
+            {% endpartialdef %}
+        </form>
+    {% else %}
+        <p>No subtopics</p>
+    {% endif %}
+    <a
+        role="button"
+        href="{%if topic%}{%url 'subjects:topic-detail' subject.id topic.id%}{%else%}{%url 'subjects:topic-list' subject.id%}{%endif%}"
+    >
+        Return to {% if topic %}topic{% else %}topics{% endif %}
+    </a>
+    <script>
+        // See: https://htmx.org/examples/sortable/
+        htmx.onLoad(function(content) {
+                const sortables = content.querySelectorAll(".sortable");
+                for (let i = 0; i < sortables.length; i++) {
+                  const sortable = sortables[i];
+                  const sortableInstance = new Sortable(sortable, {
+                      animation: 150,
+
+                      // Make the `.htmx-indicator` unsortable
+                      filter: ".htmx-indicator",
+                      onMove: function (evt) {
+                        return evt.related.className.indexOf('htmx-indicator') === -1;
+                      },
+
+                      // Disable sorting on the `end` event
+                      onEnd: function (evt) {
+                        this.option("disabled", true);
+                      }
+                  });
+
+                  // Re-enable sorting on the `htmx:afterSwap` event
+                  sortable.addEventListener("htmx:afterSwap", function() {
+                    sortableInstance.option("disabled", false);
+                  });
+                }
+            })
+    </script>
+{% endblock %}

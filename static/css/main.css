@@ -115,3 +115,12 @@ label:has(:required) > :first-child:after {
     content: " *";
     color: red;
 }
+
+.draggable {
+    cursor: grab;
+    touch-action: none;
+}
+
+.draggable:active {
+    cursor: grabbing;
+}

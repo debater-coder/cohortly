@@ -4,7 +4,7 @@ import nh3
 from django import forms
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth.mixins import UserPassesTestMixin
-from django.core.exceptions import PermissionDenied
+from django.core.exceptions import BadRequest, PermissionDenied
 from django.db.models import Count, Exists, OuterRef
 from django.forms.models import ModelForm
 from django.forms.widgets import Textarea
@@ -132,7 +132,7 @@ def topic_detail_view(request, subject_pk, topic_pk):
     )
     topics = Topic.objects.filter(subject=subject_pk, parent_id=topic_pk)
 
-    lookup = get_topic_lookup(Topic.objects.get_queryset())
+    lookup = get_topic_lookup(Topic.objects.filter(subject_id=subject_pk))
     path = get_topic_path(lookup, topic_pk)
 
     return render(
@@ -167,6 +167,58 @@ def topic_create_view(request, subject_pk: int):
 
 
 @is_moderator
+def topic_reorder_view(request, subject_pk: int):
+    template = "subjects/topic_reorder.html"
+
+    if request.htmx:
+        template += "#topics"
+
+    subject = get_object_or_404(Subject, pk=subject_pk)
+
+    parent = request.GET.get("parent")
+
+    # Finding path, and topics candidates
+    path = None
+    topic = None
+
+    if parent is not None:
+        parent = int(parent)
+        topics = Topic.objects.filter(subject=subject_pk, parent_id=parent)
+        topic = get_object_or_404(Topic, pk=parent)
+        # do not allow reordering outside subject
+        if topic.subject.id != subject_pk:
+            raise BadRequest()
+        lookup = get_topic_lookup(Topic.objects.filter(subject_id=subject_pk))
+        path = get_topic_path(lookup, parent)
+    else:
+        topics = Topic.objects.filter(subject=subject_pk, parent__isnull=True)
+
+    if request.method == "POST":
+        ordering = request.POST.getlist("item")
+        reordered = {
+            id: position for position, id in enumerate(ordering)
+        }  # map a topic id to its new position
+
+        for topic in topics:
+            topic.position = reordered.get(str(topic.pk), topic.position)
+
+        Topic.objects.bulk_update(topics, ["position"])
+        topics = topics.all()
+
+    return render(
+        request,
+        template,
+        {
+            "subject": subject,
+            "topics": topics,
+            "path": path,
+            "topic": topic,
+            "topic_path": path,
+        },
+    )
+
+
+@is_moderator
 def topic_edit_view(
     request,
     subject_pk: int,
@@ -187,6 +239,7 @@ def topic_edit_view(
     )
 
 
+@is_moderator
 @require_POST
 def topic_delete(
     request,
@@ -200,9 +253,6 @@ def topic_delete(
 
     if subject_pk != topic.subject.id:
         raise Http404()
-
-    if not membership.moderator:
-        raise PermissionDenied("You must be a moderator to perform this action")
 
     topic.delete()
     response = HttpResponse()

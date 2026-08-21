@@ -35,9 +35,13 @@ class Topic(models.Model):
     description = MarkdownxField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
+    position = models.PositiveIntegerField(default=0)
     parent = models.ForeignKey(
         "self", on_delete=models.CASCADE, null=True, blank=True, related_name="children"
     )
+
+    class Meta:
+        ordering = ["position"]
 
     def __str__(self) -> str:
         return self.name

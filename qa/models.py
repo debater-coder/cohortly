@@ -29,7 +29,7 @@ class Answer(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     body = MarkdownxField(max_length=30000, help_text=MARKDOWN_HELP_TEXT)
-    marked_as_solution = models.BooleanField()
+    marked_as_solution = models.BooleanField(default=False)
     posted_by = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="answers"
     )

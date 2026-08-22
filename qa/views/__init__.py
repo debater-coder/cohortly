@@ -1,3 +1,4 @@
+from .answer_views import answer_upvote
 from .question_views import (
     question_ask_view,
     question_detail_view,
@@ -12,4 +13,5 @@ __all__ = [
     "question_list_view",
     "question_upvote",
     "question_edit_view",
+    "answer_upvote",
 ]

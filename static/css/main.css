@@ -111,7 +111,7 @@ label:has(:required) > :first-child:after {
     border: 0;
 }
 
-.field-required ::after {
+label.field-required::after {
     content: " *";
     color: red;
 }

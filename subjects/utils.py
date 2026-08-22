@@ -21,6 +21,23 @@ def is_moderator(view_func):
     return wrap
 
 
+def is_member(view_func):
+    @wraps(view_func)
+    def wrap(request, subject_pk: int, *args, **kwargs):
+        membership = SubjectMembership.objects.filter(
+            user=request.user, subject_id=subject_pk
+        ).first()
+
+        if membership:
+            return view_func(request, *args, subject_pk=subject_pk, **kwargs)
+
+        raise PermissionDenied(
+            "You must be a member of the subject to perform this action"
+        )
+
+    return wrap
+
+
 def get_topic_lookup(qs: QuerySet[Topic]):
     return {topic["id"]: topic for topic in qs.values("id", "name", "parent_id")}
 

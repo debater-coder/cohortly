@@ -1,0 +1,36 @@
+{% extends "layouts/logged_in.html" %}
+
+{% block content %}
+    <nav aria-label="breadcrumb">
+        <ul>
+            <li><a href="/dashboard/">Home</a></li>
+            <li><a href="{% url 'subjects:subject-list' %}">Subjects</a></li>
+            <li><a href="{% url 'subjects:subject-detail' subject.id %}">{{ subject.name }}</a></li>
+            <li>Questions</li>
+        </ul>
+    </nav>
+    <section>
+        <a href="{% url 'subjects:qa:question-ask' subject.id %}" role="button">Ask a question</a>
+    </section>
+    <section>
+        <h2>Questions</h2>
+        {% for question in questions %}
+            <article>
+                <h3>
+                    <a href="{% url 'subjects:qa:question-detail' subject.id question.id %}">{{ question.title }}</a>
+                </h3>
+                <p>Asked by {{ question.asked_by.get_full_name }}</p>
+                <p>
+                    {% for topic in question.topics.all %}
+                        <mark><a
+                                class="contrast"
+                                href="{%url 'subjects:topic-detail' subject.id topic.id %}"
+                            >{{ topic.name }}</a></mark>
+                    {% endfor %}
+                </p>
+            </article>
+        {% empty %}
+            <p>No questions in this subject</p>
+        {% endfor %}
+    </section>
+{% endblock %}

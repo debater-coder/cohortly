@@ -13,6 +13,19 @@ ALLOWED_TAGS = {
     "code",
     "pre",
     "blockquote",
+    "h1",
+    "h2",
+    "h3",
+    "h4",
+    "h4",
+    "h6",
+    "table",
+    "tbody",
+    "tfoot",
+    "td",
+    "th",
+    "thead",
+    "tr",
 }
 ALLOWED_ATTRS = {"a": {"href", "title"}}
 

@@ -6,8 +6,8 @@
             <li><a href="/dashboard/">Home</a></li>
             <li><a href="{% url 'subjects:subject-list' %}">Subjects</a></li>
             <li><a href="{% url 'subjects:subject-detail' subject.id %}">{{ subject.name }}</a></li>
-            <li><a href="{% url 'subjects:topic-list' subject.id %}">Topics</a></li>
-            <li>Create new topic</li>
+            <li><a href="{% url 'subjects:qa:question-list' subject.id %}">Questions</a></li>
+            <li>Ask a question</li>
         </ul>
     </nav>
     <form method="post">

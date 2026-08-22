@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import include, path
 
 from . import views
 
@@ -6,9 +6,9 @@ app_name = "subjects"
 
 urlpatterns = [
     path("", views.SubjectsListView.as_view(), name="subject-list"),
-    path("<int:subject>/", views.SubjectDetailView.as_view(), name="subject-detail"),
+    path("<int:subject_pk>/", views.SubjectDetailView.as_view(), name="subject-detail"),
     path(
-        "<int:subject>/toggle-membership",
+        "<int:subject_pk>/toggle-membership",
         views.subject_toggle_membership,
         name="subject-toggle-membership",
     ),
@@ -43,4 +43,5 @@ urlpatterns = [
         views.TopicAutocompleteView.as_view(),
         name="autocomplete-topic",
     ),
+    path("<int:subject_pk>/qa/", include("qa.urls")),
 ]

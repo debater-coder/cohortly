@@ -1,0 +1,117 @@
+from django import forms
+from django.forms import ModelForm
+from django.shortcuts import get_object_or_404, redirect, render
+from django.views.decorators.http import require_POST
+from django_tomselect.app_settings import Const, TomSelectConfig
+from django_tomselect.forms import TomSelectModelMultipleChoiceField
+
+from cohortly.markdown_utils import safe_markdownify
+from qa.models import Question
+from subjects.models import Subject, SubjectMembership
+from subjects.utils import is_member
+
+
+class QuestionForm(ModelForm):
+    required_css_class = "field-required"
+
+    class Meta:
+        model = Question
+        fields = ["title", "body", "topics"]
+
+    def __init__(self, *args, subject_id, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.subject_id = subject_id
+
+        self.fields["topics"] = TomSelectModelMultipleChoiceField(
+            config=TomSelectConfig(
+                url="subjects:autocomplete-topic",
+                placeholder="Select one or more topics...",
+                filter_by=[Const(subject_id, "subject_id")],
+                label_field="path",
+            ),
+        )
+
+    def clean_topics(self):
+        topics = self.cleaned_data["topics"]
+
+        for topic in topics:
+            if topic.subject_id != self.subject_id:
+                raise forms.ValidationError(
+                    "That topic doesn't belong to the selected subject"
+                )
+        return topics
+
+
+@is_member
+def question_list_view(request, subject_pk: int):
+    subject = get_object_or_404(Subject, pk=subject_pk)
+
+    return render(
+        request,
+        "qa/question_list.html",
+        {
+            "subject": subject,
+            "questions": Question.objects.filter(subject_id=subject_pk),
+        },
+    )
+
+
+@is_member
+def question_ask_view(request, subject_pk: int):
+    subject = get_object_or_404(Subject, pk=subject_pk)
+
+    preset_question = Question(asked_by=request.user, subject_id=subject_pk)
+    form = QuestionForm(
+        request.POST or None, instance=preset_question, subject_id=subject_pk
+    )
+
+    if request.method == "POST" and form.is_valid():
+        question = form.save()
+        return redirect("subjects:qa:question-detail", subject_pk, question.id)
+
+    return render(
+        request,
+        "qa/question_form.html",
+        {"subject": subject, "form": form},
+    )
+
+
+def question_detail_view(request, subject_pk: int, question_pk: int):
+    subject = get_object_or_404(Subject, pk=subject_pk)
+    question = get_object_or_404(Question, subject_id=subject_pk, pk=question_pk)
+
+    membership = SubjectMembership.objects.filter(
+        user=request.user, subject=subject
+    ).first()
+
+    return render(
+        request,
+        "qa/question_detail.html",
+        {
+            "question": question,
+            "subject": subject,
+            "content": safe_markdownify(question.body),
+            "membership": membership,
+        },
+    )
+
+
+@is_member
+@require_POST
+def question_upvote(request, subject_pk: int, question_pk: int):
+    subject = get_object_or_404(Subject, pk=subject_pk)
+    question = get_object_or_404(Question, subject_id=subject_pk, pk=question_pk)
+
+    if question.upvoted_by.filter(id=request.user.id).exists():
+        question.upvoted_by.remove(request.user)
+    else:
+        question.upvoted_by.add(request.user)
+
+    return render(
+        request,
+        "qa/question_detail.html#upvote_button",
+        {
+            "question": question,
+            "subject": subject,
+        },
+    )

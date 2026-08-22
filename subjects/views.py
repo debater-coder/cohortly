@@ -1,6 +1,5 @@
 from typing import override
 
-import nh3
 from django import forms
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth.mixins import UserPassesTestMixin
@@ -45,7 +44,7 @@ class SubjectsListView(ListView):
 class SubjectDetailView(DetailView):
     model = Subject
     context_object_name = "subject"
-    pk_url_kwarg = "subject"
+    pk_url_kwarg = "subject_pk"
 
     def get_object(self, queryset=None):
         obj = super().get_object(queryset)
@@ -79,7 +78,6 @@ class TopicForm(ModelForm):
     class Meta:
         model = Topic
         fields = ["name", "description", "parent"]
-        widgets = {"description": Textarea()}
 
     def __init__(self, *args, subject_id, **kwargs):
         super().__init__(*args, **kwargs)

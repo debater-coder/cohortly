@@ -29,5 +29,6 @@
     {% endif %}
     <ul>
         <li><a href="{% url 'subjects:topic-list' subject.id %}">Topics</a></li>
+        <li><a href="{% url 'subjects:qa:question-list' subject.id %}">Questions</a></li>
     </ul>
 {% endblock %}

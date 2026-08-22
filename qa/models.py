@@ -13,11 +13,14 @@ class Question(models.Model):
     subject = models.ForeignKey(
         "subjects.Subject", on_delete=models.CASCADE, related_name="questions"
     )
-    topic = models.ManyToManyField("subjects.Topic")
+    topics = models.ManyToManyField("subjects.Topic")
     asked_by = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="questions"
     )
     upvoted_by = models.ManyToManyField(settings.AUTH_USER_MODEL)
+
+    def __str__(self) -> str:
+        return self.title
 
 
 class Answer(models.Model):

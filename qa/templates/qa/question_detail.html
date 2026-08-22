@@ -50,7 +50,7 @@
         {% endwith %}
     {% endpartialdef %}
     {% if question.asked_by == user or membership.moderator %}
-        <button>Edit this question</button>
+        <a role="button" href="{% url 'subjects:qa:question-edit' subject.id question.id %}">Edit this question</a>
     {% endif %}
     <h2>{{ question.answer_set.count }} Answer{{ question.answer_set.count|pluralize }}</h2>
 {% endblock %}

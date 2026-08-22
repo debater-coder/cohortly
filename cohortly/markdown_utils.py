@@ -1,6 +1,8 @@
 import markdown
 import nh3
 
+MARKDOWN_HELP_TEXT = """Format your text using <a href="https://www.markdownguide.org/cheat-sheet/">Markdown Syntax</a> to easily add bolding, italics, lists, and links."""
+
 ALLOWED_TAGS = {
     "p",
     "br",

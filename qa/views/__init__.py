@@ -1,6 +1,7 @@
 from .question_views import (
     question_ask_view,
     question_detail_view,
+    question_edit_view,
     question_list_view,
     question_upvote,
 )
@@ -10,4 +11,5 @@ __all__ = [
     "question_detail_view",
     "question_list_view",
     "question_upvote",
+    "question_edit_view",
 ]

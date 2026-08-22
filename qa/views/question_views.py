@@ -1,4 +1,7 @@
+from enum import member
+
 from django import forms
+from django.core.exceptions import PermissionDenied
 from django.forms import ModelForm
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
@@ -72,7 +75,7 @@ def question_ask_view(request, subject_pk: int):
     return render(
         request,
         "qa/question_form.html",
-        {"subject": subject, "form": form},
+        {"subject": subject, "form": form, "new": True},
     )
 
 
@@ -93,6 +96,33 @@ def question_detail_view(request, subject_pk: int, question_pk: int):
             "content": safe_markdownify(question.body),
             "membership": membership,
         },
+    )
+
+
+def question_edit_view(request, subject_pk: int, question_pk: int):
+    subject = get_object_or_404(Subject, pk=subject_pk)
+    question = get_object_or_404(Question, subject_id=subject_pk, pk=question_pk)
+
+    membership = SubjectMembership.objects.filter(
+        user=request.user, subject=subject
+    ).first()
+
+    # Can only edit a question if you created it, or if you are a subject moderator
+    is_moderator = membership and membership.moderator
+
+    if not (is_moderator or question.asked_by == request.user):
+        raise PermissionDenied()
+
+    form = QuestionForm(request.POST or None, instance=question, subject_id=subject_pk)
+
+    if request.method == "POST" and form.is_valid():
+        question = form.save()
+        return redirect("subjects:qa:question-detail", subject_pk, question.id)
+
+    return render(
+        request,
+        "qa/question_form.html",
+        {"subject": subject, "form": form, "new": False},
     )
 
 

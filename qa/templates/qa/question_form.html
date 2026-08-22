@@ -7,7 +7,7 @@
             <li><a href="{% url 'subjects:subject-list' %}">Subjects</a></li>
             <li><a href="{% url 'subjects:subject-detail' subject.id %}">{{ subject.name }}</a></li>
             <li><a href="{% url 'subjects:qa:question-list' subject.id %}">Questions</a></li>
-            <li>Ask a question</li>
+            <li>{% if new %}Ask a question{% else %}Edit this question{% endif %}</li>
         </ul>
     </nav>
     <form method="post">

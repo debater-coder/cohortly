@@ -2,6 +2,8 @@ from django.conf import settings
 from django.db import models
 from markdownx.models import MarkdownxField
 
+from cohortly.markdown_utils import MARKDOWN_HELP_TEXT
+
 
 class Subject(models.Model):
     name = models.CharField(max_length=200)
@@ -32,7 +34,10 @@ class SubjectMembership(models.Model):
 
 class Topic(models.Model):
     name = models.CharField(max_length=200)
-    description = MarkdownxField(blank=True)
+    description = MarkdownxField(
+        blank=True,
+        help_text=MARKDOWN_HELP_TEXT,
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
     position = models.PositiveIntegerField(default=0)

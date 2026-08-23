@@ -23,6 +23,16 @@ class Session(models.Model):
     end_time = models.DateTimeField()
     description = models.TextField(blank=True)
 
+    class Meta:
+        constraints = [
+            models.CheckConstraint(
+                condition=models.Q(
+                    end_time__gt=models.F("start_time"),
+                ),
+                name="check_end_time_after_start_time",
+            )
+        ]
+
     def get_absolute_url(self):
         return reverse(
             "subjects:tutoring:session-detail", args=(self.subject.id, self.id)

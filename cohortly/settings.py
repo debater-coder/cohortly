@@ -48,6 +48,8 @@ INSTALLED_APPS = [
     "resources.apps.ResourcesConfig",
     "subjects.apps.SubjectsConfig",
     "tutoring.apps.TutoringConfig",
+    # Search
+    "modelsearch",
     # Htmx
     "django_htmx",
     "template_partials",

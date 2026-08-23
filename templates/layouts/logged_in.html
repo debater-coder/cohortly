@@ -6,7 +6,13 @@
                 <li><a class="contrast" href="{% url 'dashboard:index' %}"><strong>Cohortly</strong></a></li>
             </ul>
             <ul>
-                <li><input type="search" name="search" placeholder="Search" aria-label="Search"></li>
+                <li>
+                    {% block search %}
+                        <form action="{% url 'dashboard:search'%}">
+                            <input type="search" name="q" placeholder="Search" aria-label="Search">
+                        </form>
+                    {% endblock %}
+                </li>
             </ul>
             <ul>
                 <li><a href="#" class="secondary">Leaderboard</a></li>

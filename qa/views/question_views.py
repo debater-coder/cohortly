@@ -12,7 +12,7 @@ from django_tomselect.forms import TomSelectModelMultipleChoiceField
 
 from cohortly.markdown_utils import safe_markdownify
 from qa.models import Answer, Question
-from qa.views.answer_views import AnswerForm
+from qa.views.answer_views import AnswerForm, process_answers
 from subjects.models import Subject, SubjectMembership
 from subjects.utils import is_member
 
@@ -90,19 +90,7 @@ def question_detail_view(request, subject_pk: int, question_pk: int):
         user=request.user, subject=subject
     ).first()
 
-    answers = [
-        {
-            "content": safe_markdownify(answer.body),
-            "marked_as_solution": answer.marked_as_solution,
-            "posted_by": answer.posted_by.get_full_name(),
-            "upvote_count": answer.upvote_count,
-            "created_at": answer.created_at,
-            "upvoted": answer.upvoted_by.filter(id=request.user.id).exists(),
-            "id": answer.id,
-        }
-        for answer in question.answer_set.annotate(upvote_count=Count("upvoted_by"))
-    ]
-
+    answers = process_answers(question.answer_set, request.user)
     # Answer Form
     preset_answer = Answer(
         question_id=question_pk,

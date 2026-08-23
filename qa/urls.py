@@ -15,4 +15,9 @@ urlpatterns = [
         views.answer_upvote,
         name="upvote-answer",
     ),
+    path(
+        "<int:question_pk>/<int:answer_pk>/mark-as-solution",
+        views.mark_as_solution,
+        name="mark-as-solution",
+    ),
 ]

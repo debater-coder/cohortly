@@ -31,9 +31,41 @@
     <h2>{{ question.answer_set.count }} Answer{{ question.answer_set.count|pluralize }}</h2>
     {% for answer in answers %}
         <article>
-            <p><strong>Answered {{ answer.created_at|naturaltime }} by {{ answer.posted_by }}</strong></p>
-            {% url 'subjects:qa:upvote-answer' subject.id question.id answer.id as upvote_target %}
-            {% include 'core/_upvote_button.html' with  upvote_count=answer.upvote_count upvoted=answer.upvoted %}
+            <div id="answer-header-{{answer.id}}">
+                {% partialdef answer_header inline %}
+                    <p>
+                        {% if answer.marked_as_solution %}
+                            <mark>Marked as solution</mark>
+                        {% endif %}
+                        <strong>Answered {{ answer.created_at|naturaltime }} by {{ answer.posted_by_name }}</strong>
+                    </p>
+                    {% if question.asked_by == user or membership.moderator %}
+                        {% if answer.marked_as_solution %}
+                            <button
+                                class="secondary"
+                                hx-post="{% url 'subjects:qa:mark-as-solution' subject.id question.id answer.id %}"
+                                hx-target="#answer-header-{{answer.id}}"
+                            >
+                                Unmark this answer as a solution
+                            </button>
+                        {% else %}
+                            <button
+                                class="primary"
+                                hx-post="{% url 'subjects:qa:mark-as-solution' subject.id question.id answer.id %}"
+                                hx-target="#answer-header-{{answer.id}}"
+                            >
+                                Mark this answer as a solution
+                            </button>
+                        {% endif %}
+                    {% endif %}
+                    {% if answer.posted_by_id == user.id or membership.moderator %}
+                        <a role="button" href="{%url 'subjects:qa:answer-edit'% subject.id question.id answer.id}"
+                        >Edit this answer</a>
+                    {% endif %}
+                    {% url 'subjects:qa:upvote-answer' subject.id question.id answer.id as upvote_target %}
+                    {% include 'core/_upvote_button.html' with  upvote_count=answer.upvote_count upvoted=answer.upvoted %}
+                {% endpartialdef %}
+            </div>
             <hr>
             {{ answer.content|safe }}
         </article>

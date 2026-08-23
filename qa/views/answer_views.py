@@ -1,3 +1,5 @@
+from django.core.exceptions import PermissionDenied
+from django.db.models import Count
 from django.forms.models import ModelForm
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
@@ -15,6 +17,28 @@ class AnswerForm(ModelForm):
     class Meta:
         model = Answer
         fields = ["body"]
+
+
+def process_answer(answer: Answer, user, upvote_count):
+    return {
+        "content": safe_markdownify(answer.body),
+        "marked_as_solution": answer.marked_as_solution,
+        "posted_by_name": answer.posted_by.get_full_name(),
+        "posted_by_id": answer.posted_by.id,
+        "upvote_count": upvote_count,
+        "created_at": answer.created_at,
+        "upvoted": answer.upvoted_by.filter(id=user.id).exists(),
+        "id": answer.id,
+    }
+
+
+def process_answers(answers, user):
+    return [
+        process_answer(answer, user, answer.upvote_count)
+        for answer in answers.annotate(upvote_count=Count("upvoted_by")).order_by(
+            "-marked_as_solution", "-upvote_count", "-created_at"
+        )
+    ]
 
 
 @is_member
@@ -39,5 +63,34 @@ def answer_upvote(request, subject_pk: int, question_pk: int, answer_pk: int):
             "upvote_target": reverse(
                 "subjects:qa:upvote-answer", args=[subject_pk, question_pk, answer_pk]
             ),
+        },
+    )
+
+
+@is_member
+@require_POST
+def mark_as_solution(request, subject_pk: int, question_pk: int, answer_pk: int):
+    subject = get_object_or_404(Subject, pk=subject_pk)
+    question = get_object_or_404(Question, subject_id=subject_pk, pk=question_pk)
+    answer = get_object_or_404(Answer, question_id=question_pk, pk=answer_pk)
+
+    membership = SubjectMembership.objects.filter(
+        user=request.user, subject=subject
+    ).first()
+    is_moderator = membership and membership.moderator
+
+    if not (is_moderator or question.asked_by == request.user):
+        raise PermissionDenied()
+
+    answer.marked_as_solution = not answer.marked_as_solution
+    answer.save()
+
+    return render(
+        request,
+        "qa/question_detail.html#answer_header",
+        {
+            "subject": subject,
+            "question": question,
+            "answer": process_answer(answer, request.user, answer.upvoted_by.count()),
         },
     )

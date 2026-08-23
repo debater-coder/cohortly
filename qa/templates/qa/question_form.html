@@ -1,6 +1,6 @@
-{% extends "layouts/logged_in.html" %}
+{% extends "subjects/subject_layout.html" %}
 
-{% block content %}
+{% block nav %}
     <nav aria-label="breadcrumb">
         <ul>
             <li><a href="/dashboard/">Home</a></li>
@@ -10,6 +10,8 @@
             <li>{% if new %}Ask a question{% else %}Edit this question{% endif %}</li>
         </ul>
     </nav>
+{% endblock %}
+{% block main %}
     <form method="post">
         {% csrf_token %}
         {{ form }}

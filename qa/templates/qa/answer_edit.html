@@ -1,15 +1,19 @@
-{% extends "layouts/logged_in.html" %}
-{% block content %}
+{% extends "subjects/subject_layout.html" %}
+{% block nav %}
     <nav aria-label="breadcrumb">
         <ul>
             <li><a href="/dashboard/">Home</a></li>
             <li><a href="{% url 'subjects:subject-list' %}">Subjects</a></li>
             <li><a href="{% url 'subjects:subject-detail' subject.id %}">{{ subject.name }}</a></li>
             <li><a href="{% url 'subjects:qa:question-list' subject.id %}">Questions</a></li>
-            <li><a href="{% url 'subjects:qa:question-detail' subject.id question.id %}">{{ question.title }}</a></li>
+            <li>
+                <a href="{% url 'subjects:qa:question-detail' subject.id question.id %}">{{ question.title }}</a>
+            </li>
             <li>Edit your answer</li>
         </ul>
     </nav>
+{% endblock %}
+{% block main %}
     <h2>Your answer</h2>
     <form method="post">
         {% csrf_token %}

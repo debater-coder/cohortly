@@ -124,3 +124,15 @@ label.field-required::after {
 .draggable:active {
     cursor: grabbing;
 }
+
+.sidebar-container {
+    display: flex;
+    gap: 16px;
+    aside > ul {
+        padding: 0;
+        margin: 0;
+    }
+    main {
+        width: 100%;
+    }
+}

@@ -1,6 +1,6 @@
-{% extends "layouts/logged_in.html" %}
+{% extends "subjects/subject_layout.html" %}
 
-{% block content %}
+{% block nav %}
     <nav aria-label="breadcrumb">
         <ul>
             <li><a href="/dashboard/">Home</a></li>
@@ -9,6 +9,8 @@
             <li>Questions</li>
         </ul>
     </nav>
+{% endblock %}
+{% block main %}
     <section>
         <a href="{% url 'subjects:qa:question-ask' subject.id %}" role="button">Ask a question</a>
     </section>

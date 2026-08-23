@@ -1,6 +1,6 @@
-{% extends "layouts/logged_in.html" %}
+{% extends "subjects/subject_layout.html" %}
 
-{% block content %}
+{% block nav %}
     <nav aria-label="breadcrumb">
         <ul>
             <li><a href="{% url 'dashboard:index' %}">Home</a></li>
@@ -8,6 +8,8 @@
             <li>{{ subject.name }}</li>
         </ul>
     </nav>
+{% endblock %}
+{% block main %}
     <h1>{{ subject.name }}</h1>
     {% if subject.membership.moderator %}
         <p>
@@ -27,8 +29,4 @@
             {% include 'subjects/_membership_button.html' with subject=subject is_member=subject.membership %}
         </article>
     {% endif %}
-    <ul>
-        <li><a href="{% url 'subjects:topic-list' subject.id %}">Topics</a></li>
-        <li><a href="{% url 'subjects:qa:question-list' subject.id %}">Questions</a></li>
-    </ul>
 {% endblock %}

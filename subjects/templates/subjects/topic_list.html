@@ -1,7 +1,9 @@
-{% extends "layouts/logged_in.html" %}
+{% extends "subjects/subject_layout.html" %}
 
-{% block content %}
+{% block nav %}
     {% include "subjects/_topic_nav.html" %}
+{% endblock %}
+{% block main %}
     {% if topic %}
         <h1>{{ topic.name }}</h1>
         <p>{{ content|safe }}</p>

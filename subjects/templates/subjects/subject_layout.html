@@ -1,0 +1,16 @@
+{% extends "layouts/logged_in.html" %}
+
+{% block content %}
+    {% block nav %}{% endblock %}
+    <section class="sidebar-container">
+        <aside>
+            <ul>
+                <li><a class="contrast" href="{% url 'subjects:topic-list' subject.id %}">Topics</a></li>
+                <li><a class="contrast" href="{% url 'subjects:qa:question-list' subject.id %}">Questions</a></li>
+            </ul>
+        </aside>
+        <main>
+            {% block main %}{% endblock main %}
+        </main>
+    </section>
+{% endblock %}

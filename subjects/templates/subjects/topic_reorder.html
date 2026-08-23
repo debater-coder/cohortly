@@ -1,4 +1,4 @@
-{% extends "layouts/logged_in.html" %}
+{% extends "subjects/subject_layout.html" %}
 {% load static %}
 {% load partials %}
 {% block extra_head %}
@@ -6,8 +6,10 @@
     <script src="{% static 'js/sortable.min.js' %}"></script>
 {% endblock %}
 
-{% block content %}
+{% block nav %}
     {% include "subjects/_topic_nav.html" %}
+{% endblock %}
+{% block content %}
     <h2>Reorder subtopics</h2>
     <p>Drag items to reorder. Changes are applied immediately.</p>
     {% if topics %}

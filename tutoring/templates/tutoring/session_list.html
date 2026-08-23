@@ -1,0 +1,15 @@
+{% extends "subjects/subject_layout.html" %}
+
+{% block nav %}
+    <nav aria-label="breadcrumb">
+        <ul>
+            <li><a href="/dashboard/">Home</a></li>
+            <li><a href="{% url 'subjects:subject-list' %}">Subjects</a></li>
+            <li><a href="{% url 'subjects:subject-detail' subject.id %}">{{ subject.name }}</a></li>
+            <li>Sessions</li>
+        </ul>
+    </nav>
+{% endblock %}
+{% block main %}
+    Sessions
+{% endblock %}

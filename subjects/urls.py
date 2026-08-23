@@ -44,4 +44,5 @@ urlpatterns = [
         name="autocomplete-topic",
     ),
     path("<int:subject_pk>/qa/", include("qa.urls")),
+    path("<int:subject_pk>/tutoring/", include("tutoring.urls")),
 ]

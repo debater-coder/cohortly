@@ -50,3 +50,11 @@ class Topic(models.Model):
 
     def __str__(self) -> str:
         return self.name
+
+    def get_all_descendants(self):
+        descendants = []
+        for child in self.children.all():
+            descendants.append(child)
+            descendants.extend(child.get_all_descendants())
+
+        return descendants

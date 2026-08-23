@@ -18,6 +18,7 @@ from django_tomselect.forms import TomSelectModelChoiceField
 from markdownx.utils import markdownify
 
 from cohortly.markdown_utils import safe_markdownify
+from qa.models import Question
 from subjects.models import Subject, SubjectMembership, Topic
 from subjects.utils import get_topic_lookup, get_topic_path, is_moderator
 
@@ -123,6 +124,11 @@ def topic_list_view(request, subject_pk):
 def topic_detail_view(request, subject_pk, topic_pk):
     subject = get_object_or_404(Subject, pk=subject_pk)
     topic = get_object_or_404(Topic, pk=topic_pk)
+
+    topic_questions = Question.objects.filter(
+        topics__in=[topic, *topic.get_all_descendants()]
+    ).distinct()
+
     membership = (
         SubjectMembership.objects.filter(user=request.user, subject=subject).first()
         if subject
@@ -143,6 +149,7 @@ def topic_detail_view(request, subject_pk, topic_pk):
             "topic_path": path,
             "topic": topic,
             "content": safe_markdownify(topic.description),
+            "topic_questions": topic_questions,
         },
     )
 

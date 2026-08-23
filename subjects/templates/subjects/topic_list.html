@@ -8,6 +8,18 @@
     {% endif %}
     <h2>Subtopics</h2>
     {% include "subjects/_topic_tree_node.html" %}
+    {% if topic %}
+        <h2>Questions</h2>
+        <ul>
+            {% for question in topic_questions %}
+                <li>
+                    <a href="{% url 'subjects:qa:question-detail' subject.id question.id %}">{{ question.title }}</a>
+                </li>
+            {% empty %}
+                <p>This topic has no associated questions</p>
+            {% endfor %}
+        </ul>
+    {% endif %}
 
     {% if membership.moderator %}
         <h2>Moderator options</h2>

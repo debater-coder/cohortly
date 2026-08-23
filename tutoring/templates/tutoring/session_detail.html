@@ -13,9 +13,31 @@
 {% endblock %}
 {% block main %}
     <h1>{{ session.title }}</h1>
-    <button>Join session</button>
-    <button>Edit this session</button>
-    <button>Delete session</button>
+    {% partialdef join_session_button inline %}
+        {% if not joined %}
+            <button hx-post="{% url 'subjects:tutoring:session-join' subject.id session.id %}" hx-swap="outerHTML">
+                Join session
+            </button>
+        {% else %}
+            <button
+                hx-post="{% url 'subjects:tutoring:session-join' subject.id session.id %}"
+                hx-swap="outerHTML"
+                class="secondary"
+            >
+                Leave session
+            </button>
+        {% endif %}
+    {% endpartialdef %}
+    {% if can_modify %}
+        <a role="button" href="{% url 'subjects:tutoring:session-edit' subject.id session.id %}">Edit this session</a>
+        <button
+            class="secondary"
+            hx-confirm="Are you sure you want to delete the '{{session.title}}' session?"
+            hx-post="{% url 'subjects:tutoring:session-delete' subject.id session.id %}"
+        >
+            Delete session
+        </button>
+    {% endif %}
     <table>
         <tr>
             <th scope="row">Location</th>
@@ -28,10 +50,6 @@
         <tr>
             <th scope="row">Capacity</th>
             <td>{{ session.capacity }}</td>
-        </tr>
-        <tr>
-            <th scope="row">Description</th>
-            <td>{{ session.description }}</td>
         </tr>
         <tr>
             <th scope="row">Description</th>
@@ -52,6 +70,10 @@
                     <mark><a class="contrast" href="{{topic.get_absolute_url}}">{{ topic.name }}</a></mark>
                 {% endfor %}
             </td>
+        </tr>
+        <tr>
+            <th scope="row">Session Type</th>
+            <th scope="row">{% if session.needs_join_requests %}Peer tutoring{% else %}Group study{% endif %}</th>
         </tr>
     </table>
 {% endblock %}

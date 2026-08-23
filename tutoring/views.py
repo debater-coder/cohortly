@@ -1,14 +1,17 @@
 from django import forms
 from django.core.exceptions import PermissionDenied
 from django.forms import ModelForm
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import get_object_or_404, redirect, render, reverse
+from django.views.decorators.http import require_POST
+from django_htmx.http import HttpResponseClientRedirect
 from django_tomselect.app_settings import Const, TomSelectConfig
 from django_tomselect.forms import (
     TomSelectModelMultipleChoiceField,
 )
 
 from subjects.models import Subject, SubjectMembership
-from tutoring.models import Session
+from subjects.utils import is_member
+from tutoring.models import Session, SessionParticipant
 
 
 class SessionForm(ModelForm):
@@ -16,7 +19,15 @@ class SessionForm(ModelForm):
 
     class Meta:
         model = Session
-        fields = ["title", "location", "capacity", "topics", "start_time", "end_time"]
+        fields = [
+            "title",
+            "description",
+            "location",
+            "capacity",
+            "topics",
+            "start_time",
+            "end_time",
+        ]
         help_texts = {
             "location": "A physical location or meeting link",
             "capacity": "The maximum number of students who can join this session",
@@ -96,21 +107,119 @@ def new_group_study_session_view(request, subject_pk: int):
 
     if request.method == "POST" and form.is_valid():
         session = form.save()
-        return redirect(
-            "subjects:tutoring:session-list", subject_pk
-        )  # TODO: change to redirect to newly created session
+        return redirect("subjects:tutoring:session-detail", subject_pk, session.id)
 
     return render(
         request, "tutoring/session_form.html", {"subject": subject, "form": form}
     )
 
 
+def can_modify_session(session, user, membership):
+    return (membership and membership.moderator) or (
+        session.needs_join_requests and session.host == user
+    )
+
+
 def session_detail_view(request, subject_pk: int, session_pk: int):
     subject = get_object_or_404(Subject, pk=subject_pk)
+    membership = SubjectMembership.objects.filter(
+        user=request.user, subject=subject
+    ).first()
     session = get_object_or_404(Session, pk=session_pk)
+
+    can_modify = can_modify_session(session, request.user, membership)
+    joined = SessionParticipant.objects.filter(
+        student=request.user, session=session
+    ).exists()
 
     return render(
         request,
         "tutoring/session_detail.html",
-        {"subject": subject, "session": session},
+        {
+            "subject": subject,
+            "session": session,
+            "can_modify": can_modify,
+            "joined": joined,
+        },
+    )
+
+
+def session_edit_view(request, subject_pk: int, session_pk: int):
+    subject = get_object_or_404(Subject, pk=subject_pk)
+    membership = SubjectMembership.objects.filter(
+        user=request.user, subject=subject
+    ).first()
+    session = get_object_or_404(Session, pk=session_pk)
+
+    can_modify = can_modify_session(session, request.user, membership)
+
+    if not can_modify:
+        raise PermissionDenied()
+
+    form = SessionForm(request.POST or None, instance=session, subject_id=subject_pk)
+
+    if request.method == "POST" and form.is_valid():
+        session = form.save()
+        return redirect("subjects:tutoring:session-detail", subject_pk, session_pk)
+
+    return render(
+        request, "tutoring/session_form.html", {"subject": subject, "form": form}
+    )
+
+
+@require_POST
+@is_member
+def session_delete(request, subject_pk: int, session_pk: int):
+    subject = get_object_or_404(Subject, pk=subject_pk)
+    session = get_object_or_404(Session, subject_id=subject_pk, pk=session_pk)
+
+    membership = SubjectMembership.objects.filter(
+        user=request.user, subject=subject
+    ).first()
+
+    can_modify = can_modify_session(session, request.user, membership)
+
+    if not can_modify:
+        raise PermissionDenied()
+
+    session.delete()
+
+    if request.htmx:
+        return HttpResponseClientRedirect(
+            reverse("subjects:tutoring:session-list", args=(subject_pk,))
+        )
+
+    return redirect("subjects:tutoring:session-list", subject_pk)
+
+
+@require_POST
+@is_member
+def session_join(request, subject_pk: int, session_pk: int):
+    subject = get_object_or_404(Subject, pk=subject_pk)
+    session = get_object_or_404(Session, subject_id=subject_pk, pk=session_pk)
+
+    participation = SessionParticipant.objects.filter(
+        student=request.user, session=session
+    ).first()
+
+    if participation:
+        participation.delete()
+        joined = False
+    else:
+        participation = SessionParticipant(
+            student=request.user,
+            session=session,
+            status=(
+                SessionParticipant.Status.PENDING
+                if session.needs_join_requests
+                else SessionParticipant.Status.ACCEPTED
+            ),
+        )
+        participation.save()
+        joined = True
+
+    return render(
+        request,
+        "tutoring/session_detail.html#join_session_button",
+        {"joined": joined, "subject": subject, "session": session},
     )

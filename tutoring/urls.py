@@ -16,4 +16,19 @@ urlpatterns = [
         views.session_detail_view,
         name="session-detail",
     ),
+    path(
+        "sessions/<int:session_pk>/edit",
+        views.session_edit_view,
+        name="session-edit",
+    ),
+    path(
+        "sessions/<int:session_pk>/join",
+        views.session_join,
+        name="session-join",
+    ),
+    path(
+        "sessions/<int:session_pk>/delete",
+        views.session_delete,
+        name="session-delete",
+    ),
 ]

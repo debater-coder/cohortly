@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.db import models
+from django.shortcuts import reverse
 
 
 class Session(models.Model):
@@ -20,6 +21,15 @@ class Session(models.Model):
     )
     start_time = models.DateTimeField()
     end_time = models.DateTimeField()
+    description = models.TextField(blank=True)
+
+    def get_absolute_url(self):
+        return reverse(
+            "subjects:tutoring:session-detail", args=(self.subject.id, self.id)
+        )
+
+    def __str__(self):
+        return self.title
 
 
 class SessionParticipant(models.Model):

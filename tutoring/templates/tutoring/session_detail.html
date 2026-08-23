@@ -1,0 +1,57 @@
+{% extends "subjects/subject_layout.html" %}
+
+{% block nav %}
+    <nav aria-label="breadcrumb">
+        <ul>
+            <li><a href="/dashboard/">Home</a></li>
+            <li><a href="{% url 'subjects:subject-list' %}">Subjects</a></li>
+            <li><a href="{% url 'subjects:subject-detail' subject.id %}">{{ subject.name }}</a></li>
+            <li><a href="{% url 'subjects:tutoring:session-list' subject.id %}">Sessions</a></li>
+            <li>{{ session.title }}</li>
+        </ul>
+    </nav>
+{% endblock %}
+{% block main %}
+    <h1>{{ session.title }}</h1>
+    <button>Join session</button>
+    <button>Edit this session</button>
+    <button>Delete session</button>
+    <table>
+        <tr>
+            <th scope="row">Location</th>
+            <td>{{ session.location }}</td>
+        </tr>
+        <tr>
+            <th scope="row">Hosted by</th>
+            <td>{{ session.host.get_full_name }}</td>
+        </tr>
+        <tr>
+            <th scope="row">Capacity</th>
+            <td>{{ session.capacity }}</td>
+        </tr>
+        <tr>
+            <th scope="row">Description</th>
+            <td>{{ session.description }}</td>
+        </tr>
+        <tr>
+            <th scope="row">Description</th>
+            <td>{{ session.description }}</td>
+        </tr>
+        <tr>
+            <th scope="row">Start time</th>
+            <td>{{ session.start_time }}</td>
+        </tr>
+        <tr>
+            <th scope="row">End time</th>
+            <td>{{ session.end_time }}</td>
+        </tr>
+        <tr>
+            <th scope="row">Topics</th>
+            <td>
+                {% for topic in session.topics.all %}
+                    <mark><a class="contrast" href="{{topic.get_absolute_url}}">{{ topic.name }}</a></mark>
+                {% endfor %}
+            </td>
+        </tr>
+    </table>
+{% endblock %}

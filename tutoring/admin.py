@@ -1,3 +1,5 @@
 from django.contrib import admin
 
-# Register your models here.
+from tutoring.models import Session, SessionParticipant
+
+admin.site.register([Session, SessionParticipant])

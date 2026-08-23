@@ -11,5 +11,27 @@
     </nav>
 {% endblock %}
 {% block main %}
-    Sessions
+    {% if membership.moderator %}
+        <h2>Moderator options</h2>
+        <p>
+            As a moderator, you can create group study sessions, which will appear on the grade calendar and be open to
+            the entire subject. Group study sessions are designed for more general study/revision sessions on a regular
+            basis, compared to peer tutoring sessions which are more targeted to helping particular students.
+        </p>
+        <a href="{%url 'subjects:tutoring:group-session-new' subject.id %}" role="button">Create group study session</a>
+        <hr>
+    {% endif %}
+    <h2>Upcoming group study sessions</h2>
+    {% for session in group_sessions %}
+        <article>
+            <h3><a class="contrast" href="{{session.get_absolute_url}}">{{ session.title }}</a></h3>
+            <p>
+                Capacity: {{ session.capacity }}<br>Topics: {% for topic in session.topics.all %}
+                    <mark><a class="contrast" href="{{topic.get_absolute_url}}">{{ topic.name }}</a></mark>
+                {% endfor %}
+            </p>
+        </article>
+    {% empty %}
+        <p>No group study sessions</p>
+    {% endfor %}
 {% endblock %}

@@ -31,4 +31,5 @@ urlpatterns = [
         views.session_delete,
         name="session-delete",
     ),
+    path("sessions/events", views.session_events, name="session-events"),
 ]

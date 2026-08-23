@@ -1,4 +1,30 @@
 {% extends "subjects/subject_layout.html" %}
+{% load static %}
+
+{% block extra_head %}
+    {{ block.super }}
+    <script src="{%static 'fullcalendar/fullcalendar.global.js' %}"></script>
+    <script src="{%static 'fullcalendar/themes/forma/global.js'%}"></script>
+
+    <link href="{%static 'fullcalendar/skeleton.css' %}" rel="stylesheet">
+    <link href="{%static 'fullcalendar/themes/forma/theme.css' %}" rel="stylesheet">
+    <link href="{%static 'fullcalendar/themes/forma/palettes/blue.css' %}" rel="stylesheet">
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+          const calendarEl = document.querySelector("#calendar");
+          const calendar = new FullCalendar.Calendar(calendarEl, {
+            events: "{% url 'subjects:tutoring:session-events' subject.id %}",
+            headerToolbar: {
+              left: "prev,next today",
+              center: "title",
+              right: "dayGridMonth,timeGridWeek,timeGridDay"
+            }
+          });
+          calendar.render();
+        });
+    </script>
+{% endblock %}
 
 {% block nav %}
     <nav aria-label="breadcrumb">
@@ -21,6 +47,9 @@
         <a href="{%url 'subjects:tutoring:group-session-new' subject.id %}" role="button">Create group study session</a>
         <hr>
     {% endif %}
+    <h2>Session calendar</h2>
+    <div id="calendar"></div>
+
     <h2>Upcoming group study sessions</h2>
     {% for session in upcoming_group_sessions %}
         <article>

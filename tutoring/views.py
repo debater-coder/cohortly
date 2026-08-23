@@ -1,8 +1,10 @@
 from django import forms
 from django.core.exceptions import PermissionDenied
 from django.forms import ModelForm
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render, reverse
 from django.utils import timezone
+from django.utils.dateparse import parse_datetime
 from django.views.decorators.http import require_POST
 from django_htmx.http import HttpResponseClientRedirect
 from django_tomselect.app_settings import Const, TomSelectConfig
@@ -223,4 +225,29 @@ def session_join(request, subject_pk: int, session_pk: int):
         request,
         "tutoring/session_detail.html#join_session_button",
         {"joined": joined, "subject": subject, "session": session},
+    )
+
+
+def session_events(request, subject_pk: int):
+    subject = get_object_or_404(Subject, pk=subject_pk)
+
+    start = parse_datetime(request.GET["start"])
+    end = parse_datetime(request.GET["end"])
+
+    sessions = Session.objects.filter(
+        subject=subject, start_time__gt=start, end_time__lt=end
+    ).order_by("start_time")
+
+    return JsonResponse(
+        [
+            {
+                "id": session.id,
+                "title": session.title,
+                "start": session.start_time,
+                "end": session.end_time,
+                "url": session.get_absolute_url(),
+            }
+            for session in sessions
+        ],
+        safe=False,
     )

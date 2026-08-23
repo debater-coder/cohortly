@@ -13,7 +13,11 @@
     </nav>
 {% endblock %}
 {% block main %}
-    <h1>{{ question.title }}</h1>
+    <h1>
+        {% if question.is_solved %}
+            <mark>Solved</mark>{% endif %}
+        {{ question.title }}
+    </h1>
     <p>Asked {{ question.created_at|naturaltime }} by {{ question.asked_by.get_full_name }}</p>
     <p>
         {% for topic in question.topics.all %}

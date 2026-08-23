@@ -38,6 +38,9 @@ class Question(index.Indexed, models.Model):
             args=(self.subject.id, self.id),
         )
 
+    def is_solved(self):
+        return self.answer_set.filter(marked_as_solution=True).exists()
+
     def __str__(self) -> str:
         return self.title
 

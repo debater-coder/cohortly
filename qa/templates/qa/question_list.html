@@ -1,5 +1,4 @@
 {% extends "subjects/subject_layout.html" %}
-
 {% block nav %}
     <nav aria-label="breadcrumb">
         <ul>
@@ -19,9 +18,15 @@
         {% for question in questions %}
             <article>
                 <h3>
-                    <a href="{% url 'subjects:qa:question-detail' subject.id question.id %}">{{ question.title }}</a>
+                    <a href="{% url 'subjects:qa:question-detail' subject.id question.id %}">
+                        {% if question.is_solved %}
+                            <mark>Solved</mark>{% endif %}
+                        {{ question.title }}</a>
                 </h3>
-                <p>Asked by {{ question.asked_by.get_full_name }}</p>
+                <p>
+                    Asked by {{ question.asked_by.get_full_name }} <mark>{{ question.answer_set.count }}
+                        answer{{ question.answer_set.count|pluralize }}</mark>
+                </p>
                 <p>
                     {% for topic in question.topics.all %}
                         <mark><a

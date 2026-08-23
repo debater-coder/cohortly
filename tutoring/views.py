@@ -2,6 +2,7 @@ from django import forms
 from django.core.exceptions import PermissionDenied
 from django.forms import ModelForm
 from django.shortcuts import get_object_or_404, redirect, render, reverse
+from django.utils import timezone
 from django.views.decorators.http import require_POST
 from django_htmx.http import HttpResponseClientRedirect
 from django_tomselect.app_settings import Const, TomSelectConfig
@@ -73,8 +74,8 @@ def session_list_view(request, subject_pk: int):
         user=request.user, subject=subject
     ).first()
 
-    group_sessions = Session.objects.filter(
-        subject=subject, needs_join_requests=False
+    upcoming_group_sessions = Session.objects.filter(
+        subject=subject, needs_join_requests=False, end_time__gt=timezone.now()
     ).order_by("start_time")
 
     return render(
@@ -83,7 +84,7 @@ def session_list_view(request, subject_pk: int):
         {
             "subject": subject,
             "membership": membership,
-            "group_sessions": group_sessions,
+            "upcoming_group_sessions": upcoming_group_sessions,
         },
     )
 

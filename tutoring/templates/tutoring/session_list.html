@@ -22,7 +22,7 @@
         <hr>
     {% endif %}
     <h2>Upcoming group study sessions</h2>
-    {% for session in group_sessions %}
+    {% for session in upcoming_group_sessions %}
         <article>
             <h3><a class="contrast" href="{{session.get_absolute_url}}">{{ session.title }}</a></h3>
             <p>

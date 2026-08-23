@@ -1,0 +1,27 @@
+{% extends 'layouts/logged_in.html' %}
+
+{% block content %}
+    <nav aria-label="breadcrumb">
+        <ul>
+            <li><a href="{% url 'dashboard:index' %}">Home</a></li>
+            <li>Profile</li>
+        </ul>
+    </nav>
+    <article>
+        <hgroup>
+            <h1>{{ user.get_full_name }}</h1>
+            {{ user.email }}
+        </hgroup>
+        {% if user.is_staff %}
+            <mark><a class="contrast" href="{% url 'admin:index' %}">Admin</a></mark>
+        {% endif %}
+        {% for membership in user.subjectmembership_set.all %}
+            <mark><a
+                    class="contrast"
+                    href="{{membership.subject.get_absolute_url}}"
+                >{{ membership.subject.name }}
+                    {% if membership.moderator %}Moderator{% else %}Member{% endif %}</a></mark>
+        {% endfor %}
+    </article>
+    <h2>0 Contribution Credits</h2>
+{% endblock %}

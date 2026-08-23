@@ -31,3 +31,11 @@ def search_view(request):
         context["answers"] = Answer.objects.search(search_string)
 
     return render(request, "dashboard/search.html", context)
+
+
+def profile_view(request):
+    return render(request, "dashboard/profile.html", {})
+
+
+def settings_view(request):
+    return render(request, "dashboard/settings.html", {})

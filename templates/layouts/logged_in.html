@@ -23,10 +23,10 @@
                         <summary>Account</summary>
                         <ul dir="rtl">
                             <li>
-                                <a href="">Profile</a>
+                                <a href="{% url 'dashboard:profile' %}">Profile</a>
                             </li>
                             <li>
-                                <a href="">Settings</a>
+                                <a href="{% url 'dashboard:settings' %}">Settings</a>
                             </li>
                             <li><a href="#" hx-post="{% url 'account_logout' %}" hx-target="body">Logout</a></li>
                         </ul>

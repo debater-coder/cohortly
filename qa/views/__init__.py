@@ -1,6 +1,12 @@
-from .answer_views import answer_upvote, mark_as_solution
+from .answer_views import (
+    answer_delete,
+    answer_edit_view,
+    answer_upvote,
+    mark_as_solution,
+)
 from .question_views import (
     question_ask_view,
+    question_delete,
     question_detail_view,
     question_edit_view,
     question_list_view,
@@ -15,4 +21,7 @@ __all__ = [
     "question_edit_view",
     "answer_upvote",
     "mark_as_solution",
+    "answer_edit_view",
+    "answer_delete",
+    "question_delete",
 ]

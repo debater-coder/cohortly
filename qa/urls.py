@@ -9,6 +9,7 @@ urlpatterns = [
     path("ask", views.question_ask_view, name="question-ask"),
     path("<int:question_pk>", views.question_detail_view, name="question-detail"),
     path("<int:question_pk>/edit", views.question_edit_view, name="question-edit"),
+    path("<int:question_pk>/delete", views.question_delete, name="question-delete"),
     path("<int:question_pk>/upvote", views.question_upvote, name="upvote-question"),
     path(
         "<int:question_pk>/<int:answer_pk>/upvote",
@@ -19,5 +20,15 @@ urlpatterns = [
         "<int:question_pk>/<int:answer_pk>/mark-as-solution",
         views.mark_as_solution,
         name="mark-as-solution",
+    ),
+    path(
+        "<int:question_pk>/<int:answer_pk>/edit",
+        views.answer_edit_view,
+        name="answer-edit",
+    ),
+    path(
+        "<int:question_pk>/<int:answer_pk>/delete",
+        views.answer_delete,
+        name="answer-delete",
     ),
 ]

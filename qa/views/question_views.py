@@ -7,6 +7,7 @@ from django.forms import ModelForm
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.views.decorators.http import require_POST
+from django_htmx.http import HttpResponseClientRedirect
 from django_tomselect.app_settings import Const, TomSelectConfig
 from django_tomselect.forms import TomSelectModelMultipleChoiceField
 
@@ -173,3 +174,27 @@ def question_upvote(request, subject_pk: int, question_pk: int):
             ),
         },
     )
+
+
+@require_POST
+@is_member
+def question_delete(request, subject_pk: int, question_pk: int):
+    subject = get_object_or_404(Subject, pk=subject_pk)
+    question = get_object_or_404(Question, subject_id=subject_pk, pk=question_pk)
+
+    membership = SubjectMembership.objects.filter(
+        user=request.user, subject=subject
+    ).first()
+    is_moderator = membership and membership.moderator
+
+    if not (is_moderator or question.asked_by == request.user):
+        raise PermissionDenied()
+
+    question.delete()
+
+    if request.htmx:
+        return HttpResponseClientRedirect(
+            reverse("subjects:qa:question-list", args=(subject_pk,))
+        )
+
+    return redirect("subjects:qa:question-list", subject_pk)

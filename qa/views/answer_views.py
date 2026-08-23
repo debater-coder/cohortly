@@ -1,9 +1,10 @@
 from django.core.exceptions import PermissionDenied
 from django.db.models import Count
 from django.forms.models import ModelForm
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.views.decorators.http import require_POST
+from django_htmx.http import HttpResponseClientRefresh
 
 from cohortly.markdown_utils import safe_markdownify
 from qa.models import Answer, Question
@@ -93,4 +94,54 @@ def mark_as_solution(request, subject_pk: int, question_pk: int, answer_pk: int)
             "question": question,
             "answer": process_answer(answer, request.user, answer.upvoted_by.count()),
         },
+    )
+
+
+@require_POST
+@is_member
+def answer_delete(request, subject_pk: int, question_pk: int, answer_pk: int):
+    subject = get_object_or_404(Subject, pk=subject_pk)
+    question = get_object_or_404(Question, subject_id=subject_pk, pk=question_pk)
+    answer = get_object_or_404(Answer, question_id=question_pk, pk=answer_pk)
+
+    membership = SubjectMembership.objects.filter(
+        user=request.user, subject=subject
+    ).first()
+    is_moderator = membership and membership.moderator
+
+    if not (is_moderator or answer.posted_by == request.user):
+        raise PermissionDenied()
+
+    answer.delete()
+
+    if request.htmx:
+        return HttpResponseClientRefresh()
+
+    return redirect("subjects:qa:question-detail", subject_pk, question_pk)
+
+
+@is_member
+def answer_edit_view(request, subject_pk: int, question_pk: int, answer_pk: int):
+    subject = get_object_or_404(Subject, pk=subject_pk)
+    question = get_object_or_404(Question, subject_id=subject_pk, pk=question_pk)
+    answer = get_object_or_404(Answer, question_id=question_pk, pk=answer_pk)
+
+    membership = SubjectMembership.objects.filter(
+        user=request.user, subject=subject
+    ).first()
+    is_moderator = membership and membership.moderator
+
+    if not (is_moderator or answer.posted_by == request.user):
+        raise PermissionDenied()
+
+    answer_form = AnswerForm(request.POST or None, instance=answer)
+
+    if request.method == "POST" and answer_form.is_valid():
+        answer_form.save()
+        return redirect("subjects:qa:question-detail", subject_pk, question_pk)
+
+    return render(
+        request,
+        "qa/answer_edit.html",
+        {"answer_form": answer_form, "subject": subject, "question": question},
     )

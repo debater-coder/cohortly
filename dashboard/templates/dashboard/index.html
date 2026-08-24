@@ -1,4 +1,30 @@
 {% extends "layouts/logged_in.html" %}
+{% load static %}
+
+{% block extra_head %}
+    {{ block.super }}
+    <script src="{%static 'fullcalendar/fullcalendar.global.js' %}"></script>
+    <script src="{%static 'fullcalendar/themes/forma/global.js'%}"></script>
+
+    <link href="{%static 'fullcalendar/skeleton.css' %}" rel="stylesheet">
+    <link href="{%static 'fullcalendar/themes/forma/theme.css' %}" rel="stylesheet">
+    <link href="{%static 'fullcalendar/themes/forma/palettes/blue.css' %}" rel="stylesheet">
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+          const calendarEl = document.querySelector("#calendar");
+          const calendar = new FullCalendar.Calendar(calendarEl, {
+            events: "{% url 'subjects:all-session-events' %}",
+            headerToolbar: {
+              left: "prev,next today",
+              center: "title",
+              right: "dayGridMonth,timeGridWeek,timeGridDay"
+            }
+          });
+          calendar.render();
+        });
+    </script>
+{% endblock %}
 {% block content %}
     <h1>Subjects</h1>
     {% if subjects %}
@@ -19,4 +45,8 @@
             more.
         </p>
     {% endif %}
+
+    <h2>Grade-wide session calendar</h2>
+    <p>Use this calendar to assist in preventing conflicts between different sessions.</p>
+    <div id="calendar"></div>
 {% endblock %}

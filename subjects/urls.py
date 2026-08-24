@@ -1,5 +1,7 @@
 from django.urls import include, path
 
+from tutoring.views import all_session_events
+
 from . import views
 
 app_name = "subjects"
@@ -45,4 +47,5 @@ urlpatterns = [
     ),
     path("<int:subject_pk>/qa/", include("qa.urls")),
     path("<int:subject_pk>/tutoring/", include("tutoring.urls")),
+    path("/tutoring", all_session_events, name="all-session-events"),
 ]

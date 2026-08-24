@@ -235,26 +235,49 @@ def session_join(request, subject_pk: int, session_pk: int):
     )
 
 
-def session_events(request, subject_pk: int):
-    subject = get_object_or_404(Subject, pk=subject_pk)
+def get_session_events(qs, start, end):
+    """
+    Gets session events into a format readable by fullcalendar,
+    qs: the queryset to obtain sessions from
+    start: start datetime of filter
+    end: end datetime of filter
+    """
 
+    return [
+        {
+            "id": session.id,
+            "title": session.title,
+            "start": session.start_time,
+            "end": session.end_time,
+            "url": session.get_absolute_url(),
+        }
+        for session in qs
+    ]
+
+
+def session_events(request, subject_pk: int):
     start = parse_datetime(request.GET["start"])
     end = parse_datetime(request.GET["end"])
 
+    subject = get_object_or_404(Subject, pk=subject_pk)
     sessions = Session.objects.filter(
         subject=subject, start_time__gt=start, end_time__lt=end
     ).order_by("start_time")
 
+    start = parse_datetime(request.GET["start"])
+    end = parse_datetime(request.GET["end"])
+
     return JsonResponse(
-        [
-            {
-                "id": session.id,
-                "title": session.title,
-                "start": session.start_time,
-                "end": session.end_time,
-                "url": session.get_absolute_url(),
-            }
-            for session in sessions
-        ],
+        get_session_events(sessions, start, end),
+        safe=False,
+    )
+
+
+def all_session_events(request):
+    start = parse_datetime(request.GET["start"])
+    end = parse_datetime(request.GET["end"])
+
+    return JsonResponse(
+        get_session_events(Session.objects.all(), start, end),
         safe=False,
     )

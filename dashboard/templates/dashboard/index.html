@@ -9,7 +9,7 @@
                     <h5>
                         <a href="{% url 'subjects:subject-detail' subject.id %}" class="contrast">{{ subject.name }}</a>
                     </h5>
-                    TODO: subject at a glance
+                    {{ subject.members.count }} member{{ subject.members.count|pluralize }}
                 </article>
             {% endfor %}
         </div>

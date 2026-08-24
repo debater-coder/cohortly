@@ -1,0 +1,9 @@
+{% extends "layouts/logged_in.html" %}
+{% block content %}
+    <nav aria-label="breadcrumb">
+        <ul>
+            <li><a href="{% url 'dashboard:index' %}">Home</a></li>
+            <li>Help Center</li>
+        </ul>
+    </nav>
+{% endblock %}

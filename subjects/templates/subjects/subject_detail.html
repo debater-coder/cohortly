@@ -13,8 +13,8 @@
     <h1>{{ subject.name }}</h1>
     {% if subject.membership.moderator %}
         <p>
-            You are a moderator of this subject.
-            <a>Visit moderator options</a>
+            You are a moderator of this subject. You can edit and delete student questions and answers, create and
+            modify the topic hierarchy, and create and modify group study sessions.
         </p>
     {% elif subject.membership %}
         <p>

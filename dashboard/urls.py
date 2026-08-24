@@ -8,4 +8,5 @@ urlpatterns = [
     path("search", views.search_view, name="search"),
     path("profile", views.profile_view, name="profile"),
     path("settings", views.settings_view, name="settings"),
+    path("help", views.help_view, name="help"),
 ]

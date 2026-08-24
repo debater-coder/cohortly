@@ -39,3 +39,7 @@ def profile_view(request):
 
 def settings_view(request):
     return render(request, "dashboard/settings.html", {})
+
+
+def help_view(request):
+    return render(request, "dashboard/help.html", {})

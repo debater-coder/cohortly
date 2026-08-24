@@ -6,4 +6,59 @@
             <li>Help Center</li>
         </ul>
     </nav>
+    <h1>Getting Started</h1>
+    <p>
+        Cohortly is a web application designed to foster student collaboration by allowing students to share their
+        knowledge in Q&As and study sessions.
+    </p>
+    <p>
+        To use Cohortly, you log in with your School Portal account. Your account is linked to your email address,
+        student ID and full name. Access is limited to Sydney Boys High School students only. Once logged in, you will
+        be redirected to the <a href="{%url 'dashboard:index'%}">Dashboard</a>
+    </p>
+    <h1>Joining a subject</h1>
+    <p>
+        From the dashboard, you can join a subject by clicking the "Join or leave subjects" button. From there you can
+        manage your subject memberships. Joining a subject is required before you can use the study sessions or Q&A
+        features. From there, you can click on a subject to view its detail page.
+    </p>
+    <h1>Asking and answering questions</h1>
+    <p>
+        From the subject page, you can click on the "Questions" link in the sidebar to access the questions list. From
+        there, you can ask a question, or view existing questions. Within a question, you can upvote the question if you
+        find it helpful, post an answer, and upvote answers. Upvoted questions and answers appear earlier in their lists,
+        allowing people to find them more easily. If you posted a questions, you can mark the answer that best answers it
+        as the solution to your question, where it will appear at the top of the answers list to help people find it more easily.
+        <br>
+        Since questions serve as a resource for other students,
+        they should be clear and well-written, asking a specific syllabus-relevant question.
+    </p>
+    <h1>Joining study sessions</h1>
+    <p>On your dashboard, you can see the study sessions for all subjects across the Cohortly instance for your grade. Clicking
+        on any entry will send you to the session detail page for that session, showing description, time, location, participants
+        and other relevant information. If you are a member of that subject, you can join the session by clicking on "Join session" on
+        the session detail page. Sessions filtered to a subject can be accessed by clicking on "Sessions" in the sidebar on any subject page.</p>
+    <h1>Frequently Asked Questions</h1>
+    <h2>Why can't I join a session?</h2>
+    <p>Sessions are capacity limited to a number of students decided by the moderator.
+        This prevents groups from becoming too large and making it harder to support students.
+        Session participation is assigned on a first-come-first-serve basis. When a session is
+        at capacity, the join button will be grayed out.</p>
+    <h2>Why can't I see my subject on the dashboard?</h2>
+    <p>
+        Your dashboard will only show a subject you are a member of. If you have not yet joined a subject it will not be
+        visible on that page. If your subject is not visible on the <a href="{% url 'subjects:subject-list' %}"
+        >subjects list page</a>, then you will need to contact the administrator to add the subject.
+    </p>
+    <h2>How are new subject requests processed?</h2>
+    <p>
+        Before a new subject is created, a moderator who will manage group study sessions and Q&A content needs to be appointed.
+        More than one moderator can be appointed for large subjects to split the workload. Moderator choice is subject to the
+        administrator's discretion, and moderator privileges can be revoked if abused. A moderator can only moderate content
+        for their appointed subject.
+    </p>
+    <h2>How does moderation work?</h2>
+    <p>Moderators chosen for each subject by an administrator can create and modify group study sessions. They can also modify or delete
+        questions and answers if they contain inappropriate content.</p>
+    <p>
 {% endblock %}

@@ -58,7 +58,9 @@ def question_list_view(request, subject_pk: int):
         "qa/question_list.html",
         {
             "subject": subject,
-            "questions": Question.objects.filter(subject_id=subject_pk),
+            "questions": Question.objects.filter(subject_id=subject_pk).order_by(
+                "-upvotes"
+            ),
         },
     )
 

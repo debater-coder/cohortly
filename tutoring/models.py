@@ -38,6 +38,9 @@ class Session(models.Model):
             "subjects:tutoring:session-detail", args=(self.subject.id, self.id)
         )
 
+    def joined_participants(self):
+        return self.participants.filter(status=SessionParticipant.Status.ACCEPTED)
+
     def __str__(self):
         return self.title
 

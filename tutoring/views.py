@@ -30,11 +30,13 @@ class SessionForm(ModelForm):
             "topics",
             "start_time",
             "end_time",
+            "open",
         ]
         help_texts = {
             "location": "A physical location or meeting link",
             "capacity": "The maximum number of students who can join this session",
             "topics": "The specific topics this session will focus on",
+            "open": "Whether the session is open to new participants",
         }
         widgets = {
             "start_time": forms.DateTimeInput(
@@ -208,7 +210,7 @@ def session_join(request, subject_pk: int, session_pk: int):
     if participation:
         participation.delete()
         joined = False
-    else:
+    elif session.open:
         participation = SessionParticipant(
             student=request.user,
             session=session,
@@ -219,7 +221,12 @@ def session_join(request, subject_pk: int, session_pk: int):
             ),
         )
         participation.save()
+        if session.capacity == session.participants.count():
+            session.open = False
+            session.save()
         joined = True
+    else:
+        PermissionDenied()
 
     return render(
         request,

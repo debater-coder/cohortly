@@ -14,17 +14,21 @@
 {% block main %}
     <h1>{{ session.title }}</h1>
     {% partialdef join_session_button inline %}
-        {% if not joined %}
+        {% if not joined and session.open %}
             <button hx-post="{% url 'subjects:tutoring:session-join' subject.id session.id %}" hx-swap="outerHTML">
                 Join session
             </button>
-        {% else %}
+        {% elif joined %}
             <button
                 hx-post="{% url 'subjects:tutoring:session-join' subject.id session.id %}"
                 hx-swap="outerHTML"
                 class="secondary"
             >
                 Leave session
+            </button>
+        {% else %}
+            <button disabled>
+                Session is not open to new participants
             </button>
         {% endif %}
     {% endpartialdef %}
@@ -46,6 +50,18 @@
         <tr>
             <th scope="row">Hosted by</th>
             <td>{{ session.host.get_full_name }}</td>
+        </tr>
+        <tr>
+            <th scope="row">Open to new participants</th>
+            <td>{{ session.open }}</td>
+        </tr>
+        <tr>
+            <th scope="row">Participants</th>
+            <td>
+                {% for participation in session.joined_participants %}
+                    <mark>{{ participation.student.get_full_name }}</mark>
+                {% endfor %}
+            </td>
         </tr>
         <tr>
             <th scope="row">Capacity</th>

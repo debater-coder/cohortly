@@ -164,6 +164,22 @@ label.field-required::after {
         box-shadow var(--pico-transition);
 }
 
+.ts-control input {
+    color: var(--pico-form-element-color) !important;
+    box-shadow: none !important;
+    border: var(--pico-border-width) solid var(--pico-form-element-border-color) !important;
+    border-radius: var(--pico-border-radius) !important;
+    outline: 0 !important;
+    background-color: var(--pico-form-element-background-color) !important;
+    background-image: none !important;
+    font-weight: var(--pico-font-weight);
+    transition:
+        background-color var(--pico-transition),
+        border-color var(--pico-transition),
+        color var(--pico-transition),
+        box-shadow var(--pico-transition);
+}
+
 .ts-wrapper.multi .ts-control [data-value] {
     padding: 0.125rem 0.25rem !important;
     background-color: var(--pico-mark-background-color) !important;

@@ -1,0 +1,21 @@
+vars: {
+  d2-config: {
+    layout-engine: dagre
+  }
+}
+
+peer-tutoring: Peer Tutoring\nWeb App {
+    shape: circle
+    width: 50
+}
+
+peer-tutoring -> Students: ABC
+peer-tutoring <- Students: XYZ
+
+peer-tutoring -> Teachers: Topic Analytics,\nStudent Leaderboard
+
+peer-tutoring -> Moderators: Moderation queue
+peer-tutoring <- Moderators: Deletion\nrequests,\nModeration flags,\nTopic checklists
+
+peer-tutoring -> Administrators: ABC
+peer-tutoring <- Administrators: XYZ

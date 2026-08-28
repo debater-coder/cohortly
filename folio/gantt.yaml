@@ -1,0 +1,64 @@
+end: 2026-08-31
+# A list of tasks
+tasks:
+  # The name of the task.
+  - name: System Analysis
+    subtasks:
+      - name: Gantt Chart
+        start: 2025-10-27
+        end: 2026-07-31
+      - name: Project Proposal
+        start: 2025-10-27
+        end: 2025-11-03
+      - name: Determining Specifications
+        start: 2025-11-03
+        end: 2025-11-17
+  - name: System Design
+    subtasks:
+      - name: Database Schema
+        start: 2025-11-17
+        end: 2025-12-19
+      - name: Storyboards and Interface Designs
+        start: 2025-11-24
+        end: 2025-12-19
+      - name: Algorithms
+        start: 2025-12-19
+        end: 2026-03-01
+      - name: Class Diagram
+        start: 2025-12-19
+        end: 2026-03-01
+  - name: Implementation
+    subtasks:
+      - name: Software Implementation
+        start: 2026-03-02
+        end: 2026-08-07
+      - name: Unit Testing
+        start: 2026-03-02
+        end: 2026-08-07
+      - name: Integration Testing
+        start: 2026-06-29
+        end: 2026-08-07
+  - name: Testing and Evaluation
+    subtasks:
+      - name: Beta Testing
+        start: 2026-07-06
+        end: 2026-08-07
+      - name: Develop Test Data
+        start: 2026-02-28
+        end: 2026-07-06
+      - name: Final Evaluation
+        start: 2026-07-27
+        end: 2026-08-07
+milestones:
+  - name: Term 4 End
+    date: 2025-12-19
+  - name: Term 1 Start
+    date: 2026-02-02
+  - name: Term 1 End
+    date: 2026-04-02
+  - name: Term 2 Start
+    date: 2026-04-22
+  - name: Term 2 End
+    date: 2026-07-03
+  - name: Term 3 Start
+    date: 2026-07-21

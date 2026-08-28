@@ -2,23 +2,16 @@ from django.conf import settings
 from django.db import models
 from django.shortcuts import reverse
 from markdownx.models import MarkdownxField
-from modelsearch import index
-from modelsearch.queryset import SearchableQuerySetMixin
 
 from cohortly.markdown_utils import MARKDOWN_HELP_TEXT
 
 
-class SubjectQuerySet(SearchableQuerySetMixin, models.QuerySet): ...
-
-
-class Subject(index.Indexed, models.Model):
+class Subject(models.Model):
     name = models.CharField(max_length=200)
     created_at = models.DateTimeField(auto_now_add=True)
     members = models.ManyToManyField(
         settings.AUTH_USER_MODEL, through="SubjectMembership"
     )
-    objects = SubjectQuerySet.as_manager()
-    search_fields = [index.SearchField("name")]
 
     def get_absolute_url(self):
         return reverse(
@@ -46,17 +39,7 @@ class SubjectMembership(models.Model):
         ]
 
 
-class TopicQuerySet(SearchableQuerySetMixin, models.QuerySet): ...
-
-
-class Topic(index.Indexed, models.Model):
-    objects = TopicQuerySet.as_manager()
-
-    search_fields = [
-        index.SearchField("name", boost=2.0),
-        index.SearchField("description"),
-        index.RelatedFields("subject", Subject.search_fields),
-    ]
+class Topic(models.Model):
     name = models.CharField(max_length=200)
     description = MarkdownxField(
         blank=True,

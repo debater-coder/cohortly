@@ -5,21 +5,11 @@ from django.core.validators import MinLengthValidator
 from django.db import models
 from django.urls import reverse
 from markdownx.models import MarkdownxField
-from modelsearch import index
-from modelsearch.queryset import SearchableQuerySetMixin
 
 from cohortly.markdown_utils import MARKDOWN_HELP_TEXT
 
 
-class QuestionQuerySet(SearchableQuerySetMixin, models.QuerySet): ...
-
-
-class Question(index.Indexed, models.Model):
-    objects = QuestionQuerySet.as_manager()
-    search_fields = [
-        index.SearchField("title", boost=2.0),
-        index.SearchField("body"),
-    ]
+class Question(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     title = models.CharField(max_length=150, validators=[MinLengthValidator(15)])
     body = MarkdownxField(max_length=30000, help_text=MARKDOWN_HELP_TEXT)
@@ -45,14 +35,7 @@ class Question(index.Indexed, models.Model):
         return self.title
 
 
-class AnswerQuerySet(SearchableQuerySetMixin, models.QuerySet): ...
-
-
-class Answer(index.Indexed, models.Model):
-    objects = AnswerQuerySet.as_manager()
-    search_fields = [
-        index.SearchField("body"),
-    ]
+class Answer(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     body = MarkdownxField(max_length=30000, help_text=MARKDOWN_HELP_TEXT)
@@ -61,6 +44,9 @@ class Answer(index.Indexed, models.Model):
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="answers"
     )
     upvoted_by = models.ManyToManyField(settings.AUTH_USER_MODEL)
+
+    def __str__(self):
+        return f"Answer to {self.question}"
 
     def get_absolute_url(self):
         return (

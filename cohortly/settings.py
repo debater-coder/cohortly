@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 import environ
@@ -49,7 +50,7 @@ INSTALLED_APPS = [
     "subjects.apps.SubjectsConfig",
     "tutoring.apps.TutoringConfig",
     # Search
-    "modelsearch",
+    "haystack",
     # Htmx
     "django_htmx",
     "template_partials",
@@ -200,3 +201,13 @@ MARKDOWNX_UPLOAD_CONTENT_TYPES = [
     "image/png",
     "image/gif",
 ]  # SVG banned due to XSS potential
+
+
+# Haystack
+HAYSTACK_CONNECTIONS = {
+    "default": {
+        "ENGINE": "haystack.backends.whoosh_backend.WhooshEngine",
+        "PATH": os.path.join(os.path.dirname(__file__), "whoosh_index"),
+    },
+}
+HAYSTACK_SIGNAL_PROCESSOR = "haystack.signals.RealtimeSignalProcessor"

@@ -28,6 +28,7 @@ urlpatterns = [
     path("subjects/", include("subjects.urls")),
     path("admin/", admin.site.urls),
     path("markdownx/", include("markdownx.urls")),
+    path("search/", include("haystack.urls")),
 ] + debug_toolbar_urls()
 
 if settings.DEBUG is True:

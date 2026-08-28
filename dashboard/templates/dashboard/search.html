@@ -1,42 +1,38 @@
 {% extends "layouts/logged_in.html" %}
+{% load highlight %}
 
 {% block search %}
-    <form action="{% url 'dashboard:search'%}">
-        <input type="search" name="q" placeholder="Search" aria-label="Search" value="{{search_string}}">
-    </form>
 {% endblock %}
 {% block content %}
-    <h1>Search results</h1>
-    <h2>Subjects</h2>
-    {% for subject in subjects %}
-        <article>
-            <a href="{{subject.get_absolute_url}}">{{ subject.name }}</a>
-        </article>
-    {% empty %}
-        <p>No subjects match your query</p>
-    {% endfor %}
-    <h2>Topics</h2>
-    {% for topic in topics %}
-        <article>
-            <a href="{{topic.get_absolute_url}}">{{ topic.name }}</a>
-        </article>
-    {% empty %}
-        <p>No topics match your query</p>
-    {% endfor %}
-    <h2>Questions</h2>
-    {% for question in questions %}
-        <article>
-            <a href="{{question.get_absolute_url}}">{{ question.title }}</a>
-        </article>
-    {% empty %}
-        <p>No questions match your query</p>
-    {% endfor %}
-    <h2>Answers</h2>
-    {% for answer in answers %}
-        <article>
-            <a href="{{answer.get_absolute_url}}">Answer to {{ answer.question.title }}</a>
-        </article>
-    {% empty %}
-        <p>No answers match your query</p>
-    {% endfor %}
+    <form method="get" action="{% url 'dashboard:search'%}">
+        <table>
+            {{ form }}
+            <tr>
+                <td>&nbsp;</td>
+                <td>
+                    <input type="submit" value="Search">
+                </td>
+            </tr>
+        </table>
+    </form>
+    {% if query %}
+        <h3>Results</h3>
+
+        {% for result in page.object_list %}
+            <p>
+                <a href="{{ result.object.get_absolute_url }}">{{ result.object }}</a>
+                <br>
+                {% highlight result.text with query html_tag "mark" %}
+            </p>
+        {% empty %}
+            <p>No results found.</p>
+        {% endfor %}
+        {% if page.has_previous or page.has_next %}
+            <div>
+                {% if page.has_previous %}<a href="?q={{ query }}&amp;page={{ page.previous_page_number }}">{% endif %}&laquo; Previous{% if page.has_previous %}</a>{% endif %}
+                |
+                {% if page.has_next %}<a href="?q={{ query }}&amp;page={{ page.next_page_number }}">{% endif %}Next &raquo;{% if page.has_next %}</a>{% endif %}
+            </div>
+        {% endif %}
+    {% endif %}
 {% endblock %}

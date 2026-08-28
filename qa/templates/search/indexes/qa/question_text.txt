@@ -1,0 +1,5 @@
+{{ object.title }}
+{{ object.body }}
+{{ object.subject }}
+{{ object.topics }}
+{{ object.asked_by.get_full_name }}

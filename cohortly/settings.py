@@ -43,8 +43,6 @@ INSTALLED_APPS = [
     "core.apps.CoreConfig",
     "dashboard.apps.DashboardConfig",
     "credits.apps.CreditsConfig",
-    "moderation.apps.ModerationConfig",
-    "notifications.apps.NotificationsConfig",
     "qa.apps.QaConfig",
     "resources.apps.ResourcesConfig",
     "subjects.apps.SubjectsConfig",

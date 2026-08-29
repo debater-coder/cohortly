@@ -15,10 +15,30 @@
         <ul>
             {% for question in topic_questions %}
                 <li>
-                    <a href="{% url 'subjects:qa:question-detail' subject.id question.id %}">{{ question.title }}</a>
+                    <a href="{{question.get_absolute_url}}">{{ question.title }}</a>
                 </li>
             {% empty %}
                 <p>This topic has no associated questions</p>
+            {% endfor %}
+        </ul>
+        <h2>Resources</h2>
+        <ul>
+            {% for resource in topic_resources %}
+                <li>
+                    <a href="{{resource.get_absolute_url}}">{{ resource.title }}</a>
+                </li>
+            {% empty %}
+                <p>This topic has no associated resources</p>
+            {% endfor %}
+        </ul>
+        <h2>Sessions</h2>
+        <ul>
+            {% for session in topic_sessions %}
+                <li>
+                    <a href="{{session.get_absolute_url}}">{{ session.title }}</a>
+                </li>
+            {% empty %}
+                <p>This topic has no associated sessions</p>
             {% endfor %}
         </ul>
     {% endif %}

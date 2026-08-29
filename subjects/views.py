@@ -19,8 +19,10 @@ from markdownx.utils import markdownify
 
 from cohortly.markdown_utils import safe_markdownify
 from qa.models import Question
+from resources.models import Resource
 from subjects.models import Subject, SubjectMembership, Topic
 from subjects.utils import get_topic_lookup, get_topic_path, is_moderator
+from tutoring.models import Session
 
 
 class SubjectsListView(ListView):
@@ -128,6 +130,12 @@ def topic_detail_view(request, subject_pk, topic_pk):
     topic_questions = Question.objects.filter(
         topics__in=[topic, *topic.get_all_descendants()]
     ).distinct()
+    topic_sessions = Session.objects.filter(
+        topics__in=[topic, *topic.get_all_descendants()]
+    ).distinct()
+    topic_resources = Resource.objects.filter(
+        topics__in=[topic, *topic.get_all_descendants()]
+    ).distinct()
 
     membership = (
         SubjectMembership.objects.filter(user=request.user, subject=subject).first()
@@ -150,6 +158,8 @@ def topic_detail_view(request, subject_pk, topic_pk):
             "topic": topic,
             "content": safe_markdownify(topic.description),
             "topic_questions": topic_questions,
+            "topic_sessions": topic_sessions,
+            "topic_resources": topic_resources,
         },
     )
 

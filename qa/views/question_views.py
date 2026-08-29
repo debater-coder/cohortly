@@ -54,7 +54,6 @@ class QuestionForm(ModelForm):
         return topics
 
 
-@is_member
 def question_list_view(request, subject_pk: int):
     subject = get_object_or_404(Subject, pk=subject_pk)
 
@@ -107,7 +106,7 @@ def question_detail_view(request, subject_pk: int, question_pk: int):
 
     answer_form = AnswerForm(request.POST or None, instance=preset_answer)
 
-    if request.method == "POST" and answer_form.is_valid():
+    if membership and request.method == "POST" and answer_form.is_valid():
         answer_form.save()
         return redirect(request.path)
 
@@ -127,6 +126,7 @@ def question_detail_view(request, subject_pk: int, question_pk: int):
     )
 
 
+@is_member
 def question_edit_view(request, subject_pk: int, question_pk: int):
     subject = get_object_or_404(Subject, pk=subject_pk)
     question = get_object_or_404(Question, subject_id=subject_pk, pk=question_pk)

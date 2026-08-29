@@ -26,7 +26,8 @@ class ResourceForm(ModelForm):
         fields = ["title", "topics", "description", "content"]
         labels = {"content": "Upload a file (optional)"}
         help_texts = {
-            "description": "If you wish to provide a Google Docs link or similar, paste the link in here and leave the upload blank"
+            "description": "If you wish to provide a Google Docs link or similar, paste the link in here and leave the upload blank",
+            "content": "Only PDF files are supported.",
         }
 
     def __init__(self, *args, subject_id, **kwargs):

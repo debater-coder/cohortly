@@ -4,6 +4,7 @@ import nh3
 MARKDOWN_HELP_TEXT = """Format your text using <a href="https://www.markdownguide.org/cheat-sheet/">Markdown Syntax</a> to easily add bolding, italics, lists, and links."""
 
 ALLOWED_TAGS = {
+    "img",
     "p",
     "br",
     "strong",
@@ -29,7 +30,7 @@ ALLOWED_TAGS = {
     "thead",
     "tr",
 }
-ALLOWED_ATTRS = {"a": {"href", "title"}}
+ALLOWED_ATTRS = {"a": {"href", "title"}, "img": {"src", "alt"}}
 
 
 def safe_markdownify(content):

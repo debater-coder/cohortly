@@ -38,6 +38,7 @@ class Resource(models.Model):
         upload_to="resources/",
         validators=[
             validate_file_size,
+            validate_pdf,
             FileExtensionValidator(
                 allowed_extensions=["pdf"],
                 message="Unsupported file type, the file must be a valid PDF document.",

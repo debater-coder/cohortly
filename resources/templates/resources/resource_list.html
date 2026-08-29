@@ -5,31 +5,29 @@
             <li><a href="/dashboard/">Home</a></li>
             <li><a href="{% url 'subjects:subject-list' %}">Subjects</a></li>
             <li><a href="{% url 'subjects:subject-detail' subject.id %}">{{ subject.name }}</a></li>
-            <li>Questions</li>
+            <li>Resources</li>
         </ul>
     </nav>
 {% endblock %}
 {% block main %}
     <section>
-        <a href="{% url 'subjects:qa:question-ask' subject.id %}" role="button">Ask a question</a>
+        <a href="{% url 'subjects:resources:resource-new' subject.id %}" role="button">Add new resource</a>
     </section>
     <section>
-        <h2>Questions</h2>
-        {% for question in questions %}
+        <h2>Resources</h2>
+        {% for resource in resources %}
             <article>
                 <h3>
-                    <a href="{% url 'subjects:qa:question-detail' subject.id question.id %}">
-                        {% if question.is_solved %}
-                            <mark>Solved</mark>{% endif %}
-                        {{ question.title }}</a>
+                    <a href="{% url 'subjects:resources:resource-detail' subject.id resource.id %}">
+                        {{ resource.title }}
+                    </a>
                 </h3>
                 <p>
-                    Asked by {{ question.asked_by.get_full_name }} <mark>{{ question.answer_set.count }}
-                        answer{{ question.answer_set.count|pluralize }}</mark> {{ question.upvoted_by.count }}
-                    upvote{{ question.upvoted_by.count|pluralize }}
+                    Uploaded by {{ resource.uploader.get_full_name }}. {{ resource.upvoted_by.count }}
+                    upvote{{ resource.upvoted_by.count|pluralize }}
                 </p>
                 <p>
-                    {% for topic in question.topics.all %}
+                    {% for topic in resource.topics.all %}
                         <mark><a
                                 class="contrast"
                                 href="{%url 'subjects:topic-detail' subject.id topic.id %}"
@@ -38,7 +36,7 @@
                 </p>
             </article>
         {% empty %}
-            <p>No questions in this subject</p>
+            <p>No resources in this subject</p>
         {% endfor %}
     </section>
 {% endblock %}

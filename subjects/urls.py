@@ -47,5 +47,6 @@ urlpatterns = [
     ),
     path("<int:subject_pk>/qa/", include("qa.urls")),
     path("<int:subject_pk>/tutoring/", include("tutoring.urls")),
+    path("<int:subject_pk>/resources/", include("resources.urls")),
     path("tutoring", all_session_events, name="all-session-events"),
 ]

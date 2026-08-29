@@ -99,7 +99,7 @@ def new_group_study_session_view(request, subject_pk: int):
         user=request.user, subject=subject
     ).first()
 
-    if not membership.moderator:
+    if not (membership and membership.moderator):
         raise PermissionDenied()
 
     preset_session = Session(

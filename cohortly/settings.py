@@ -193,6 +193,11 @@ STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
 
+# Media root
+MEDIA_ROOT = BASE_DIR / "media"
+MEDIA_URL = "/media/"
+
+# Markdown
 MARKDOWNX_MARKDOWNIFY_FUNCTION = "cohortly.markdown_utils.safe_markdownify"
 MARKDOWNX_UPLOAD_CONTENT_TYPES = [
     "image/jpeg",

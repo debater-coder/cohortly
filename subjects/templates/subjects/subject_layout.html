@@ -8,6 +8,9 @@
                 <li><a class="contrast" href="{% url 'subjects:topic-list' subject.id %}">Topics</a></li>
                 <li><a class="contrast" href="{% url 'subjects:qa:question-list' subject.id %}">Questions</a></li>
                 <li><a class="contrast" href="{% url 'subjects:tutoring:session-list' subject.id %}">Sessions</a></li>
+                <li>
+                    <a class="contrast" href="{% url 'subjects:resources:resource-list' subject.id %}">Resources</a>
+                </li>
             </ul>
         </aside>
         <main>

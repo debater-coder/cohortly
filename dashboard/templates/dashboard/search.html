@@ -7,16 +7,12 @@
     <form method="get" action="{% url 'dashboard:search'%}">
         <table>
             {{ form }}
-            <tr>
-                <td>&nbsp;</td>
-                <td>
                     <input type="submit" value="Search">
-                </td>
-            </tr>
         </table>
     </form>
     {% if query %}
         <h3>Results</h3>
+        <p>Found {{paginator.count}} result{{paginator.count|pluralize}}.</p>
 
         {% for result in page.object_list %}
             <p>

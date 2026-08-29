@@ -1,0 +1,52 @@
+{% extends "subjects/subject_layout.html" %}
+
+{% load humanize %}
+{% block nav %}
+    <nav aria-label="breadcrumb">
+        <ul>
+            <li><a href="/dashboard/">Home</a></li>
+            <li><a href="{% url 'subjects:subject-list' %}">Subjects</a></li>
+            <li><a href="{% url 'subjects:subject-detail' subject.id %}">{{ subject.name }}</a></li>
+            <li><a href="{% url 'subjects:resources:resource-list' subject.id %}">Resources</a></li>
+            <li>{{ resource.title }}</li>
+        </ul>
+    </nav>
+{% endblock %}
+{% block main %}
+    <h2>{{ resource.title }}</h2>
+    <p>
+        Uploaded {{ resource.created_at|naturaltime }} by {{ resource.uploader.get_full_name }}
+    </p>
+    <p>
+        {% for topic in resource.topics.all %}
+            <mark><a
+                    class="contrast"
+                    href="{%url 'subjects:topic-detail' subject.id topic.id %}"
+                >{{ topic.name }}</a></mark>
+        {% endfor %}
+    </p>
+    {% url 'subjects:resources:upvote-resource' subject.id resource.id as upvote_target %}
+    {% include 'core/_upvote_button.html' with target='subjects:resources:upvote-resource' %}
+    {% if resource.uploader == user or membership.moderator %}
+        <a role="button" href="{% url 'subjects:resources:resource-edit' subject.id resource.id %}"
+        >Edit this resource</a>
+        <button
+            class="secondary"
+            hx-confirm="Are you sure you want to delete this resource: {{resource.title}} "
+            hx-post="{%url 'subjects:resources:resource-delete' subject.id resource.id %}"
+        >
+            Delete this resource
+        </button>
+    {% endif %}
+    <hr>
+    <p>{{ resource.description|default:"No description provided" }}</p>
+    <hr>
+    {% if resource.content %}
+        <p>File: <a href="{{ resource.content.url }}" target="_blank">Download File</a></p>
+        <ul>
+            <li><strong>File Size:</strong> {{ resource.content.size|filesizeformat }}</li>
+        </ul>
+    {% else %}
+        No file uploaded
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,20 @@
+{% extends "subjects/subject_layout.html" %}
+
+{% block nav %}
+    <nav aria-label="breadcrumb">
+        <ul>
+            <li><a href="/dashboard/">Home</a></li>
+            <li><a href="{% url 'subjects:subject-list' %}">Subjects</a></li>
+            <li><a href="{% url 'subjects:subject-detail' subject.id %}">{{ subject.name }}</a></li>
+            <li>New Resource</li>
+        </ul>
+    </nav>
+{% endblock %}
+{% block main %}
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form }}
+        <input type="submit" value="Save resource">
+    </form>
+    {{ form.media }}
+{% endblock %}

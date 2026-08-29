@@ -28,7 +28,13 @@ class ResourceForm(ModelForm):
         labels = {"content": "Upload a file (optional)"}
         help_texts = {
             "description": "If you wish to provide a Google Docs link or similar, paste the link in here and leave the upload blank",
-            "content": "Only PDF files are supported.",
+            "content": """Only PDF files are supported.
+            <article class="alert">
+                <strong>Any uploaded files will be scanned for viruses by a third-party provider (VirusTotal) before being shared with other students. Do not
+                include any sensitive or confidential information. By uploading the file, you agree to the VirusTotal processing your files, where they
+                may be saved for future virus detection.<strong>
+            </article>
+            """,
         }
 
     def __init__(self, *args, subject_id, **kwargs):

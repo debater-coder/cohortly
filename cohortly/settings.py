@@ -237,3 +237,5 @@ EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD")
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 ADMINS = (("Hamzah Ahmed", "hamzah@syedahmed.net"),)
+
+SITE_URL = env("SITE_URL")

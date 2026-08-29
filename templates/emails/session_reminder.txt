@@ -1,0 +1,8 @@
+Hi {{ participant.student.first_name }},
+
+Your session "{{ session.title }}" ({{ session.subject.name }}) starts at {{ session.start_time|date:"g:i A" }}.
+
+Where: {{ session.location }}
+Host: {{ session.host.get_full_name }}
+
+View session: {{site}}{{ session.get_absolute_url }}

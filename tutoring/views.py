@@ -8,6 +8,8 @@ from django.utils import timezone
 from django.utils.dateparse import parse_datetime
 from django.views.decorators.http import require_POST
 from django_htmx.http import HttpResponseClientRedirect, HttpResponseClientRefresh
+from django_q.models import Schedule
+from django_q.tasks import schedule
 from django_tomselect.app_settings import Const, PluginRemoveButton, TomSelectConfig
 from django_tomselect.forms import (
     TomSelectModelMultipleChoiceField,
@@ -16,6 +18,28 @@ from django_tomselect.forms import (
 from subjects.models import Subject, SubjectMembership
 from subjects.utils import is_member
 from tutoring.models import Session, SessionParticipant
+
+
+def schedule_session_reminder(session: Session):
+    """Schedules a task to send a reminder email for a session"""
+    reminder_time = session.start_time - timezone.timedelta(minutes=10)
+    if reminder_time <= timezone.now():
+        return
+
+    schedule(
+        "cohortly.tasks.send_session_reminder",
+        session.id,
+        schedule_type=Schedule.ONCE,
+        next_run=reminder_time,
+        name=f"session-reminder-{session.id}",
+    )
+
+
+def remove_session_reminder(session):
+    """Removes an existing scheduled reminder for that session"""
+    Schedule.objects.filter(
+        name=f"session-reminder-{session.id}",
+    ).delete()
 
 
 def query_upcoming_tutoring_sessions():
@@ -148,6 +172,7 @@ def new_group_study_session_view(request, subject_pk: int):
 
     if request.method == "POST" and form.is_valid():
         session = form.save()
+        schedule_session_reminder(session)
 
         # Add the host to the participants list
         participation = SessionParticipant(
@@ -179,6 +204,7 @@ def new_tutoring_session_view(request, subject_pk: int):
 
     if request.method == "POST" and form.is_valid():
         session = form.save()
+        schedule_session_reminder(session)
 
         # Add the host to the participants list
         participation = SessionParticipant(
@@ -246,6 +272,8 @@ def session_edit_view(request, subject_pk: int, session_pk: int):
 
     if request.method == "POST" and form.is_valid():
         session = form.save()
+        remove_session_reminder(session)
+        schedule_session_reminder(session)
         return redirect("subjects:tutoring:session-detail", subject_pk, session_pk)
 
     return render(
@@ -268,6 +296,7 @@ def session_delete(request, subject_pk: int, session_pk: int):
     if not can_modify:
         raise PermissionDenied()
 
+    remove_session_reminder(session)
     session.delete()
 
     if request.htmx:

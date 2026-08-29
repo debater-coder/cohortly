@@ -1,10 +1,13 @@
 import hashlib
 
 import vt
-from django.core.mail import mail_admins
+from django.conf import settings
+from django.core.mail import mail_admins, send_mass_mail
+from django.template.loader import render_to_string
 
 from cohortly.settings import env
 from resources.models import Resource
+from tutoring.models import Session, SessionParticipant
 
 client = vt.Client(env("VIRUS_TOTAL_API_KEY"))
 
@@ -51,3 +54,30 @@ def scan_resource(resource_id):
         raise
 
     resource.save(update_fields=["scan_status"])
+
+
+def send_session_reminder(session_id):
+    session = Session.objects.get(id=session_id)
+
+    participants = session.participants.filter(
+        status=SessionParticipant.Status.ACCEPTED
+    )
+    send_mass_mail(
+        (
+            (
+                f"Reminder: {session.title} starts in 10 minutes",
+                render_to_string(
+                    "emails/session_reminder.txt",
+                    {
+                        "participant": participant,
+                        "session": session,
+                        "site": settings.SITE_URL,
+                    },
+                ),
+                None,
+                [participant.student.email],
+            )
+            for participant in participants
+            if participant.student.email
+        )
+    )

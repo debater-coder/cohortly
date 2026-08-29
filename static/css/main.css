@@ -186,6 +186,14 @@ label.field-required::after {
     background-image: none !important;
     color: var(--pico-mark-color) !important;
     vertical-align: baseline !important;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    button {
+        margin: 0 !important;
+        background-color: transparent;
+        border: none;
+    }
 }
 
 .ts-dropdown .active {

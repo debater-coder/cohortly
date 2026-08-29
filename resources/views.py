@@ -6,7 +6,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.views.decorators.http import require_POST
 from django_htmx.http import HttpResponseClientRedirect
-from django_tomselect.app_settings import Const, TomSelectConfig
+from django_tomselect.app_settings import Const, PluginRemoveButton, TomSelectConfig
 from django_tomselect.forms import TomSelectModelMultipleChoiceField
 
 from resources.models import Resource
@@ -39,6 +39,11 @@ class ResourceForm(ModelForm):
                 placeholder="Select one or more topics:",
                 filter_by=[Const(subject_id, "subject_id")],
                 label_field="path",
+                plugin_remove_button=PluginRemoveButton(
+                    title="Remove this item",
+                    label="&times;",
+                    class_name="remove",
+                ),
             )
         )
 

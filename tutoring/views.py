@@ -7,7 +7,7 @@ from django.utils import timezone
 from django.utils.dateparse import parse_datetime
 from django.views.decorators.http import require_POST
 from django_htmx.http import HttpResponseClientRedirect
-from django_tomselect.app_settings import Const, TomSelectConfig
+from django_tomselect.app_settings import Const, PluginRemoveButton, TomSelectConfig
 from django_tomselect.forms import (
     TomSelectModelMultipleChoiceField,
 )
@@ -58,6 +58,11 @@ class SessionForm(ModelForm):
                 placeholder="Select one or more topics:",
                 filter_by=[Const(subject_id, "subject_id")],
                 label_field="path",
+                plugin_remove_button=PluginRemoveButton(
+                    title="Remove this item",
+                    label="&times;",
+                    class_name="remove",
+                ),
             )
         )
 

@@ -47,11 +47,35 @@
         <a href="{%url 'subjects:tutoring:group-session-new' subject.id %}" role="button">Create group study session</a>
         <hr>
     {% endif %}
+    <p>
+        Want to help out other students? Set availability to host peer tutoring sessions, to help others in one on one
+        or small group study or catchup sessions. You can create sessions at times that suit you. Students then request
+        to join a particular session (you can accept or decline those requests).
+        <br><a
+            role="button"
+            href="{%url 'subjects:tutoring:tutoring-session-new' subject.id %}"
+        >Create a peer tutoring session</a>
+    </p>
+    <hr>
+    <h2>Open peer tutoring sessions</h2>
+    {% for session in upcoming_tutoring_sessions %}
+        <article>
+            <h3><a class="contrast" href="{{session.get_absolute_url}}">{{ session.title }}</a></h3>
+            <h3>Hosted by: {{ session.host.get_full_name }}</h3>
+            <p>
+                Capacity: {{ session.capacity }}<br>Topics: {% for topic in session.topics.all %}
+                    <mark><a class="contrast" href="{{topic.get_absolute_url}}">{{ topic.name }}</a></mark>
+                {% endfor %}
+            </p>
+        </article>
+    {% empty %}
+        <p>No peer tutoring sessions</p>
+    {% endfor %}
     <h2>Session calendar</h2>
     <div id="calendar"></div>
 
-    <h2>Upcoming group study sessions</h2>
-    {% for session in upcoming_group_sessions %}
+    <h2>Your upcoming sessions</h2>
+    {% for session in upcoming_sessions %}
         <article>
             <h3><a class="contrast" href="{{session.get_absolute_url}}">{{ session.title }}</a></h3>
             <p>

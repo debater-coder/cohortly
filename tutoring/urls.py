@@ -12,6 +12,11 @@ urlpatterns = [
         name="group-session-new",
     ),
     path(
+        "new-tutoring-session",
+        views.new_tutoring_session_view,
+        name="tutoring-session-new",
+    ),
+    path(
         "sessions/<int:session_pk>",
         views.session_detail_view,
         name="session-detail",
@@ -30,6 +35,16 @@ urlpatterns = [
         "sessions/<int:session_pk>/delete",
         views.session_delete,
         name="session-delete",
+    ),
+    path(
+        "sessions/<int:session_pk>/<int:participation_pk>/accept",
+        views.accept_join_request,
+        name="session-accept",
+    ),
+    path(
+        "sessions/<int:session_pk>/<int:participation_pk>/reject",
+        views.reject_join_request,
+        name="session-reject",
     ),
     path("sessions/events", views.session_events, name="session-events"),
 ]

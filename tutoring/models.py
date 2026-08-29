@@ -1,6 +1,13 @@
 from django.conf import settings
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.shortcuts import reverse
+from django.utils import timezone
+
+
+def validate_not_in_past(value):
+    if value < timezone.now():
+        raise ValidationError("The date cannot be in the past.")
 
 
 class Session(models.Model):
@@ -19,8 +26,8 @@ class Session(models.Model):
     upvoted_by = models.ManyToManyField(
         settings.AUTH_USER_MODEL, related_name="session_upvote_set"
     )
-    start_time = models.DateTimeField()
-    end_time = models.DateTimeField()
+    start_time = models.DateTimeField(validators=[validate_not_in_past])
+    end_time = models.DateTimeField(validators=[validate_not_in_past])
     description = models.TextField(blank=True)
 
     class Meta:
@@ -30,6 +37,7 @@ class Session(models.Model):
                     end_time__gt=models.F("start_time"),
                 ),
                 name="check_end_time_after_start_time",
+                violation_error_message="The end time must occur after the start time",
             )
         ]
 
@@ -41,8 +49,20 @@ class Session(models.Model):
     def joined_participants(self):
         return self.participants.filter(status=SessionParticipant.Status.ACCEPTED)
 
+    def pending_participants(self):
+        return self.participants.filter(status=SessionParticipant.Status.PENDING)
+
     def __str__(self):
         return self.title
+
+    def clean(self):
+        super().clean()
+        max_capacity = 8 if self.needs_join_requests else 250
+
+        if self.capacity > max_capacity:
+            raise ValidationError(
+                {"capacity": f"The capacity cannot be greater than {max_capacity}"}
+            )
 
 
 class SessionParticipant(models.Model):

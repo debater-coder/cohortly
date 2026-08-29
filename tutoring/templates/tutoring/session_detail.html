@@ -14,23 +14,37 @@
 {% block main %}
     <h1>{{ session.title }}</h1>
     {% partialdef join_session_button inline %}
-        {% if not joined and session.open %}
-            <button hx-post="{% url 'subjects:tutoring:session-join' subject.id session.id %}" hx-swap="outerHTML">
-                Join session
-            </button>
-        {% elif joined %}
-            <button
-                hx-post="{% url 'subjects:tutoring:session-join' subject.id session.id %}"
-                hx-swap="outerHTML"
-                class="secondary"
-            >
-                Leave session
-            </button>
-        {% else %}
-            <button disabled>
-                Session is not open to new participants
-            </button>
-        {% endif %}
+        <section id="join_session">
+            {% if not participation and session.open %}
+                <button
+                    hx-post="{% url 'subjects:tutoring:session-join' subject.id session.id %}"
+                    hx-target="#join_session"
+                >
+                    {% if session.needs_join_request %}Request to join session{% else %}Join session{% endif %}
+                </button>
+            {% elif participation.status == Status.PENDING %}
+                <p>You have requested to join the session.</p>
+                <button
+                    hx-post="{% url 'subjects:tutoring:session-join' subject.id session.id %}"
+                    hx-target="#join_session"
+                    class="secondary"
+                >
+                    Withdraw request
+                </button>
+            {% elif participation.status == Status.ACCEPTED %}
+                <button
+                    hx-post="{% url 'subjects:tutoring:session-join' subject.id session.id %}"
+                    hx-target="#join_session"
+                    class="secondary"
+                >
+                    Leave session
+                </button>
+            {% else %}
+                <button disabled>
+                    Session is not open to new participants
+                </button>
+            {% endif %}
+        </section>
     {% endpartialdef %}
     {% if can_modify %}
         <a role="button" href="{% url 'subjects:tutoring:session-edit' subject.id session.id %}">Edit this session</a>
@@ -92,4 +106,24 @@
             <th scope="row">{% if session.needs_join_requests %}Peer tutoring{% else %}Group study{% endif %}</th>
         </tr>
     </table>
+    {% if can_modify %}
+        <hr>
+        <h2>Pending participants</h2>
+        {% for participant in pending_participants %}
+            <article>
+                <h3>{{ participant.student.get_full_name }}</h3>
+                <button hx-post="{% url 'subjects:tutoring:session-accept' subject.id session.id participant.id %}">
+                    Accept join request
+                </button>
+                <button
+                    hx-post="{% url 'subjects:tutoring:session-reject' subject.id session.id participant.id %}"
+                    class="secondary"
+                >
+                    Decline join request
+                </button>
+            </article>
+        {% empty %}
+            <p>There are no pending participants</p>
+        {% endfor %}
+    {% endif %}
 {% endblock %}

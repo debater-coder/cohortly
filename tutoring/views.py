@@ -1,12 +1,13 @@
 from django import forms
 from django.core.exceptions import PermissionDenied
+from django.db.models import Q
 from django.forms import ModelForm
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render, reverse
 from django.utils import timezone
 from django.utils.dateparse import parse_datetime
 from django.views.decorators.http import require_POST
-from django_htmx.http import HttpResponseClientRedirect
+from django_htmx.http import HttpResponseClientRedirect, HttpResponseClientRefresh
 from django_tomselect.app_settings import Const, PluginRemoveButton, TomSelectConfig
 from django_tomselect.forms import (
     TomSelectModelMultipleChoiceField,
@@ -15,6 +16,27 @@ from django_tomselect.forms import (
 from subjects.models import Subject, SubjectMembership
 from subjects.utils import is_member
 from tutoring.models import Session, SessionParticipant
+
+
+def query_upcoming_tutoring_sessions():
+    """Query for tutoring sessions that are open in the next week"""
+    return Q(
+        needs_join_requests=True,
+        open=True,
+        end_time__gt=timezone.now(),
+        end_time__lt=timezone.now() + timezone.timedelta(days=7),
+    )
+
+
+def query_group_or_joined(user):
+    """Returns a django query that matches sessions that are either group or the user has made a request to join"""
+    return Q(needs_join_requests=False) | Q(
+        participants__student=user,
+        participants__status__in=[
+            SessionParticipant.Status.ACCEPTED,
+            SessionParticipant.Status.PENDING,
+        ],
+    )
 
 
 class SessionForm(ModelForm):
@@ -83,8 +105,14 @@ def session_list_view(request, subject_pk: int):
         user=request.user, subject=subject
     ).first()
 
-    upcoming_group_sessions = Session.objects.filter(
-        subject=subject, needs_join_requests=False, end_time__gt=timezone.now()
+    # Sessions in the next week
+    upcoming_sessions = Session.objects.filter(
+        Q(
+            subject=subject,
+            end_time__gt=timezone.now(),
+            end_time__lt=timezone.now() + timezone.timedelta(days=7),
+        )
+        & query_group_or_joined(request.user)
     ).order_by("start_time")
 
     return render(
@@ -93,7 +121,10 @@ def session_list_view(request, subject_pk: int):
         {
             "subject": subject,
             "membership": membership,
-            "upcoming_group_sessions": upcoming_group_sessions,
+            "upcoming_sessions": upcoming_sessions,
+            "upcoming_tutoring_sessions": Session.objects.filter(
+                query_upcoming_tutoring_sessions()
+            ),
         },
     )
 
@@ -117,6 +148,45 @@ def new_group_study_session_view(request, subject_pk: int):
 
     if request.method == "POST" and form.is_valid():
         session = form.save()
+
+        # Add the host to the participants list
+        participation = SessionParticipant(
+            student=request.user,
+            session=session,
+            status=(SessionParticipant.Status.ACCEPTED),
+        )
+        participation.save()
+        return redirect("subjects:tutoring:session-detail", subject_pk, session.id)
+
+    return render(
+        request, "tutoring/session_form.html", {"subject": subject, "form": form}
+    )
+
+
+@is_member
+def new_tutoring_session_view(request, subject_pk: int):
+    subject = get_object_or_404(Subject, pk=subject_pk)
+
+    preset_session = Session(
+        needs_join_requests=True, host=request.user, subject=subject, capacity=2
+    )
+
+    form = SessionForm(
+        request.POST or None,
+        instance=preset_session,
+        subject_id=subject_pk,
+    )
+
+    if request.method == "POST" and form.is_valid():
+        session = form.save()
+
+        # Add the host to the participants list
+        participation = SessionParticipant(
+            student=request.user,
+            session=session,
+            status=(SessionParticipant.Status.ACCEPTED),
+        )
+        participation.save()
         return redirect("subjects:tutoring:session-detail", subject_pk, session.id)
 
     return render(
@@ -138,9 +208,13 @@ def session_detail_view(request, subject_pk: int, session_pk: int):
     session = get_object_or_404(Session, pk=session_pk)
 
     can_modify = can_modify_session(session, request.user, membership)
-    joined = SessionParticipant.objects.filter(
+    participation = SessionParticipant.objects.filter(
         student=request.user, session=session
-    ).exists()
+    ).first()
+
+    pending_participants = SessionParticipant.objects.filter(
+        session=session, status=SessionParticipant.Status.PENDING
+    )
 
     return render(
         request,
@@ -149,7 +223,9 @@ def session_detail_view(request, subject_pk: int, session_pk: int):
             "subject": subject,
             "session": session,
             "can_modify": can_modify,
-            "joined": joined,
+            "participation": participation,
+            "pending_participants": pending_participants,
+            "Status": SessionParticipant.Status,
         },
     )
 
@@ -214,7 +290,7 @@ def session_join(request, subject_pk: int, session_pk: int):
 
     if participation:
         participation.delete()
-        joined = False
+        participation = None
     elif session.open:
         participation = SessionParticipant(
             student=request.user,
@@ -226,21 +302,30 @@ def session_join(request, subject_pk: int, session_pk: int):
             ),
         )
         participation.save()
-        if session.capacity == session.participants.count():
+        if (
+            session.capacity
+            == session.participants.filter(
+                status=SessionParticipant.Status.ACCEPTED
+            ).count()
+        ):
             session.open = False
             session.save()
-        joined = True
     else:
-        PermissionDenied()
+        raise PermissionDenied()
 
     return render(
         request,
         "tutoring/session_detail.html#join_session_button",
-        {"joined": joined, "subject": subject, "session": session},
+        {
+            "subject": subject,
+            "session": session,
+            "participation": participation,
+            "Status": SessionParticipant.Status,
+        },
     )
 
 
-def get_session_events(qs, start, end):
+def get_session_events(qs):
     """
     Gets session events into a format readable by fullcalendar,
     qs: the queryset to obtain sessions from
@@ -261,28 +346,102 @@ def get_session_events(qs, start, end):
 
 
 def session_events(request, subject_pk: int):
+    """Session feed for a particular subject to be displayed in the calendar"""
     start = parse_datetime(request.GET["start"])
+
     end = parse_datetime(request.GET["end"])
 
     subject = get_object_or_404(Subject, pk=subject_pk)
     sessions = Session.objects.filter(
-        subject=subject, start_time__gt=start, end_time__lt=end
+        Q(subject=subject, start_time__gt=start, end_time__lt=end)
+        & query_group_or_joined(request.user)
     ).order_by("start_time")
 
     start = parse_datetime(request.GET["start"])
     end = parse_datetime(request.GET["end"])
 
     return JsonResponse(
-        get_session_events(sessions, start, end),
+        get_session_events(sessions),
         safe=False,
     )
 
 
 def all_session_events(request):
+    """Session feed for all subjects for the shared calendar"""
     start = parse_datetime(request.GET["start"])
     end = parse_datetime(request.GET["end"])
 
     return JsonResponse(
-        get_session_events(Session.objects.all(), start, end),
+        get_session_events(
+            Session.objects.filter(
+                Q(
+                    start_time__gt=start,
+                    end_time__lt=end,
+                )
+                & query_group_or_joined(request.user)
+            ),
+        ),
         safe=False,
     )
+
+
+def get_participation_for_modify(
+    user, subject_pk: int, session_pk: int, participation_pk: int
+):
+    """Helper to get participation and validate the user can modify it"""
+
+    subject = get_object_or_404(Subject, pk=subject_pk)
+    session = get_object_or_404(Session, subject_id=subject_pk, pk=session_pk)
+
+    membership = SubjectMembership.objects.filter(user=user, subject=subject).first()
+
+    can_modify = can_modify_session(session, user, membership)
+    if not can_modify:
+        raise PermissionDenied()
+
+    participation = get_object_or_404(
+        SessionParticipant, session_id=session_pk, pk=participation_pk
+    )
+
+    return session, participation
+
+
+@require_POST
+def accept_join_request(
+    request, subject_pk: int, session_pk: int, participation_pk: int
+):
+    session, participation = get_participation_for_modify(
+        request.user, subject_pk, session_pk, participation_pk
+    )
+
+    participation.status = SessionParticipant.Status.ACCEPTED
+    participation.save()
+
+    if (
+        SessionParticipant.objects.filter(
+            session=session, status=SessionParticipant.Status.ACCEPTED
+        ).count()
+        >= session.capacity
+    ):
+        session.open = False
+        session.save()
+
+    if request.htmx:
+        return HttpResponseClientRefresh()
+
+    return redirect("subjects:tutoring:session-detail", subject_pk, session_pk)
+
+
+@require_POST
+def reject_join_request(
+    request, subject_pk: int, session_pk: int, participation_pk: int
+):
+    participation = get_participation_for_modify(
+        request.user, subject_pk, session_pk, participation_pk
+    )
+    participation.delete()
+
+    if request.htmx:
+        return HttpResponseClientRefresh()
+
+    return redirect("subjects:tutoring:session-detail", subject_pk, session_pk)

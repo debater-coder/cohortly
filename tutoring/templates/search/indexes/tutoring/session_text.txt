@@ -1,3 +1,4 @@
 {{ object.title }}
 {{ object.location }}
 {{ object.description }}
+{{ object.host.get_full_name }}

@@ -1,6 +1,7 @@
 import hashlib
 
 import vt
+from django.core.mail import mail_admins
 
 from cohortly.settings import env
 from resources.models import Resource
@@ -36,6 +37,12 @@ def scan_resource(resource_id):
     resource = Resource.objects.get(id=resource_id)
     try:
         result = scan_file(resource.content)
+        if not result:
+            mail_admins(
+                f"Resource uploaded by {resource.uploader.get_full_name()} flagged as a virus",
+                f"Resource Title: {resource.title} ID: {resource.id} has been flagged as a virus.",
+            )
+
         resource.scan_status = (
             Resource.ScanStatus.CLEAN if result else Resource.ScanStatus.INFECTED
         )

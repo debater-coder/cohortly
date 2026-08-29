@@ -39,6 +39,21 @@
         </button>
     {% endif %}
     <hr>
+
+    {% if resource.scan_status == ScanStatus.INFECTED %}
+        <article class="alert">
+            <h5 class="alert_title">
+                Your file upload has been flagged as a virus. It will not be visible to other students.
+            </h5>
+        </article>
+    {% elif resource.scan_status == ScanStatus.PENDING %}
+        <article class="alert">
+            <h5 class="alert_title">
+                Virus scanning for this file is in progress, it will not be visible to other students until after scan
+                is over.
+            </h5>
+        </article>
+    {% endif %}
     <p>{{ resource.description|default:"No description provided" }}</p>
     <hr>
     {% if resource.content %}

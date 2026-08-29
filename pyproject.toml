@@ -12,10 +12,12 @@ dependencies = [
     "django-haystack>=3.4.0",
     "django-htmx>=1.29.0",
     "django-markdownx>=4.0.11",
+    "django-q2>=1.11.1",
     "django-template-partials>=25.3",
     "django-tomselect>=2026.6.2",
     "nh3>=0.3.6",
     "python-magic>=0.4.27",
+    "vt-py>=0.22.0",
     "whoosh>=2.7.4",
 ]
 

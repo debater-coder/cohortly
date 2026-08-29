@@ -2,10 +2,11 @@ from django import forms
 from django.core.handlers.exception import PermissionDenied
 from django.db.models import Count
 from django.forms import ModelForm
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import Http404, get_object_or_404, redirect, render
 from django.urls import reverse
 from django.views.decorators.http import require_POST
 from django_htmx.http import HttpResponseClientRedirect
+from django_q.tasks import async_task
 from django_tomselect.app_settings import Const, PluginRemoveButton, TomSelectConfig
 from django_tomselect.forms import TomSelectModelMultipleChoiceField
 
@@ -62,7 +63,9 @@ def resources_list_view(request, subject_pk: int):
     subject = get_object_or_404(Subject, pk=subject_pk)
 
     resources = (
-        Resource.objects.filter(subject_id=subject_pk)
+        Resource.objects.filter(
+            subject_id=subject_pk, scan_status=Resource.ScanStatus.CLEAN
+        )
         .annotate(upvote_count=Count("upvoted_by"))
         .order_by(
             "-upvote_count",
@@ -77,6 +80,18 @@ def resources_list_view(request, subject_pk: int):
             "resources": resources,
         },
     )
+
+
+def scan_resource_if_needed(resource: Resource):
+    """Scans a resource if it contains a file"""
+    if resource.content:
+        resource.scan_status = Resource.ScanStatus.PENDING
+        # Scan file
+        async_task("cohortly.tasks.scan_resource", resource.id)
+    else:
+        # No file to scan: set to clean
+        resource.scan_status = Resource.ScanStatus.CLEAN
+    resource.save(update_fields=["scan_status"])
 
 
 def resources_upload_view(request, subject_pk: int):
@@ -100,6 +115,7 @@ def resources_upload_view(request, subject_pk: int):
 
     if request.method == "POST" and form.is_valid():
         resource = form.save()
+        scan_resource_if_needed(resource)
         return redirect("subjects:resources:resource-detail", subject_pk, resource.id)
 
     return render(
@@ -114,6 +130,13 @@ def resource_detail_view(request, subject_pk: int, resource_pk: int):
     ).first()
 
     resource = get_object_or_404(Resource, pk=resource_pk)
+    #
+    # Hide resources not from this user that are not confirmed to be clean of viruses
+    if (
+        resource.scan_status != Resource.ScanStatus.CLEAN
+        and resource.uploader != request.user
+    ):
+        raise Http404()
 
     can_modify = can_modify_resource(resource, request.user, membership)
 
@@ -126,6 +149,7 @@ def resource_detail_view(request, subject_pk: int, resource_pk: int):
             "can_modify": can_modify,
             "upvoted": resource.upvoted_by.filter(pk=request.user.id).exists(),
             "upvote_count": resource.upvoted_by.count(),
+            "ScanStatus": Resource.ScanStatus,
         },
     )
 
@@ -150,6 +174,7 @@ def resources_edit_view(request, subject_pk: int, resource_pk: int):
 
     if request.method == "POST" and form.is_valid():
         resource = form.save()
+        scan_resource_if_needed(resource)
         return redirect("subjects:resources:resource-detail", subject_pk, resource.id)
 
     return render(

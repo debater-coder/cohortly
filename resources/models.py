@@ -3,6 +3,7 @@ from django.conf import settings
 from django.core.validators import FileExtensionValidator
 from django.db import models
 from django.forms import ValidationError
+from django.shortcuts import reverse
 
 
 def validate_file_size(file):
@@ -16,14 +17,23 @@ def validate_pdf(file):
     file_buffer = file.read(2048)
     file.seek(0)
     mime = magic.from_buffer(file_buffer, mime=True)
-    if mime != "application.pdf":
+    if mime != "application/pdf":
         raise ValidationError(
             "Unsupported file type, the file must be a valid PDF document."
         )
 
 
 class Resource(models.Model):
+    class ScanStatus(models.TextChoices):
+        PENDING = "pending", "Pending scan"
+        CLEAN = "clean", "Clean"
+        INFECTED = "infected", "Infected"
+        ERROR = "error", "Scan error"
+
     created_at = models.DateTimeField(auto_now_add=True)
+    scan_status = models.CharField(
+        max_length=20, choices=ScanStatus.choices, default=ScanStatus.PENDING
+    )
     title = models.CharField(max_length=150)
     subject = models.ForeignKey(
         "subjects.Subject", on_delete=models.CASCADE, related_name="resources"
@@ -50,3 +60,8 @@ class Resource(models.Model):
 
     def __str__(self):
         return f"{self.title}"
+
+    def get_absolute_url(self):
+        return reverse(
+            "subjects:resources:resource-detail", args=(self.subject.id, self.id)
+        )

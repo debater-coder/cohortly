@@ -131,6 +131,7 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 SOCIALACCOUNT_ADAPTER = "core.adapter.SocialAccountAdapter"
+ACCOUNT_ADAPTER = "core.adapter.NoNewLocalUserAdapter"
 
 SOCIALACCOUNT_PROVIDERS = {
     "openid_connect": {

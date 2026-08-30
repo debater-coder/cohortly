@@ -14,6 +14,37 @@
         <script src="{% static 'js/htmx.min.js' %}">
         </script>
         <title>{% block title %}Cohortly{% endblock %}</title>
+        <link
+            rel="stylesheet"
+            href="{% static 'katex/katex.min.css' %}"
+            integrity="sha384-u1zONI5gPXUx0UKI62c75/zww972y0v2rSK5ZYlVdS6xEuWDeZWUI66v6t1gvlXJ"
+        >
+        <script
+            defer
+            src="{% static 'katex/katex.min.js' %}"
+            integrity="sha384-ykMNcWQhhTUb0YV9SPpPUFURHZ+tWmubkakGBP+OgNK/UXdO2gtzglWx0Rj9hnO3"
+        ></script>
+        <script
+            defer
+            src="{% static 'katex/contrib/auto-render.min.js' %}"
+            integrity="sha384-bjyGPfbij8/NDKJhSGZNP/khQVgtHUE5exjm4Ydllo42FwIgYsdLO2lXGmRBf5Mz"
+        ></script>
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                renderMathInElement(document.body, {
+                  // customised options
+                  // • auto-render specific keys, e.g.:
+                  delimiters: [
+                      {left: '$$', right: '$$', display: true},
+                      {left: '$', right: '$', display: false},
+                      {left: '\\(', right: '\\)', display: false},
+                      {left: '\\[', right: '\\]', display: true}
+                  ],
+                  // • rendering keys, e.g.:
+                  throwOnError : false
+                });
+            });
+        </script>
         {% block extra_head %}
         {% endblock %}
         {% csrf_token %}

@@ -1,7 +1,7 @@
 import markdown
 import nh3
 
-MARKDOWN_HELP_TEXT = """Format your text using <a href="https://www.markdownguide.org/cheat-sheet/">Markdown Syntax</a> to easily add bolding, italics, lists, and links."""
+MARKDOWN_HELP_TEXT = """Format your text using <a href="https://www.markdownguide.org/cheat-sheet/">Markdown Syntax</a> to easily add bolding, italics, lists, and links. LaTeX math is supported within single dollar signs (<code>$</code>) for inline math and double dollar signs (<code>$$</code>) for display math."""
 
 ALLOWED_TAGS = {
     "img",

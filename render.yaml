@@ -1,0 +1,36 @@
+databases:
+  - name: cohortlydb
+    plan: free
+    databaseName: cohortly
+    user: cohortly
+
+services:
+  - type: web
+    plan: free
+    name: cohortly
+    runtime: python
+    buildCommand: "./build.sh"
+    startCommand: "uv run gunicorn cohortly.asgi:application -k uvicorn.workers.UvicornWorker"
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: cohortlydb
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: WEB_CONCURRENCY
+        value: 4
+
+  - type: worker
+    name: cohortly-q2-worker
+    runtime: python
+    plan: free
+    buildCommand: "uv sync --frozen"
+    startCommand: "uv run manage.py qcluster"
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: cohortlydb
+          property: connectionString
+      - key: SECRET_KEY
+        sync: false

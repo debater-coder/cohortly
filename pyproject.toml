@@ -5,6 +5,7 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [
+    "dj-database-url>=3.1.2",
     "django>=6.0.7",
     "django-allauth[socialaccount]>=65.18.0",
     "django-debug-toolbar>=7.0.0",
@@ -15,9 +16,13 @@ dependencies = [
     "django-q2>=1.11.1",
     "django-template-partials>=25.3",
     "django-tomselect>=2026.6.2",
+    "gunicorn>=26.2.0",
     "nh3>=0.3.6",
+    "psycopg2-binary>=2.9.12",
     "python-magic>=0.4.27",
+    "uvicorn>=0.52.4",
     "vt-py>=0.22.0",
+    "whitenoise[brotli]>=6.12.0",
     "whoosh>=2.7.4",
 ]
 

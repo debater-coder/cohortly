@@ -241,6 +241,7 @@ ANYMAIL = {
     "RESEND_API_KEY": env("RESEND_API_KEY"),
 }
 DEFAULT_FROM_EMAIL = "no-reply@cohortly.timetabl.app"
+SERVER_EMAIL = DEFAULT_FROM_EMAIL
 
 ADMINS = (("Hamzah Ahmed", "hamzah@syedahmed.net"),)
 

@@ -603,20 +603,21 @@ Implemented interactive calendars using the `fullcalendar.js` library, supportin
 efficient visualisation of study sessions. A similar calendar was also included grade-wide
 to allow the prevention of scheduling conflicts between different subjects.
 
-=== 26 August 2026
-Completed folio documentation.
+=== 30 August 2026
+Implemented resources, peer-tutoring sessions, virus scanning (and email reminders) and email alerts for uploaded
+viruses. Installed onto live system at https://cohortly.up.railway.app/
 
 == User documentation
 This is the user documentation included in the product.
+
 === Getting Started
 
 Cohortly is a web application designed to foster student collaboration by allowing students to share their
 knowledge in Q&As and study sessions.
 
-
 To use Cohortly, you log in with your School Portal account. Your account is linked to your email address,
 student ID and full name. Access is limited to Sydney Boys High School students only. Once logged in, you will
-be redirected to the Dashboard.
+be redirected to the Dashboard
 
 === Joining a subject
 
@@ -634,18 +635,35 @@ as the solution to your question, where it will appear at the top of the answers
 Since questions serve as a resource for other students,
 they should be clear and well-written, asking a specific syllabus-relevant question.
 
+=== Uploading and using resources
+You can upload resources (past papers, study notes, textbooks) as either
+a PDF document, or as a link to Google Docs or some other website. Uploaded
+documents must be in PDF format and be under 10 MB in size. Documents will
+be scanned for viruses before being visible to other students.
 === Joining study sessions
+Group study sessions are created by moderators and are designed to be larger general review sessions to assist
+many students in reviewing and catching up similar content. Peer tutoring sessions can be created by anyone,
+and allow a small group or one-on-one study sessions to catch particular students up on content they may have missed or be weaker at.
 On your dashboard, you can see the study sessions for all subjects across the Cohortly instance for your grade. Clicking
 on any entry will send you to the session detail page for that session, showing description, time, location, participants
 and other relevant information. If you are a member of that subject, you can join the session by clicking on "Join session" on
 the session detail page. Sessions filtered to a subject can be accessed by clicking on "Sessions" in the sidebar on any subject page.
++== Participating in peer tutoring
+You can create a peer tutoring session by clicking "Create a peer
+tutoring session" on the subject's session page. This creates a new empty
+peer tutoring session, which will appear to other students as long as there
+are spots available. You can select a capacity up to 8 (but smaller groups
+of 2-3 are recommended) for that session, after which it will be
+automatically closed to new participants. You can manually set the open or closed status of
+the session by clicking on the "Edit session" button and ticking or unticking the "open" checkbox. When students join
+your session, you can choose whether to accept or decline their join request.
 === Frequently Asked Questions
 ==== Why can't I join a session?
-Sessions are capacity limited to a number of students decided by the moderator.
+Sessions are capacity limited to a number of students decided by the host.
 This prevents groups from becoming too large and making it harder to support students.
 Session participation is assigned on a first-come-first-serve basis. When a session is
 at capacity, the join button will be grayed out.
-==== Why can't I see my subject on the dashboard?</h2>
+==== Why can't I see my subject on the dashboard?
 
 Your dashboard will only show a subject you are a member of. If you have not yet joined a subject it will not be
 visible on that page. If your subject is not visible on the subjects list page, then you will need to contact the administrator to add the subject.
@@ -662,6 +680,7 @@ Moderators chosen for each subject by an administrator can create and modify gro
 questions and answers if they contain inappropriate content.
 
 
+
 = Testing and Evaluating
 == Test Report
 === Authentication
@@ -670,16 +689,87 @@ This is handled by the student portal.
 #table(
   columns: (1fr, 1fr, 1fr, 1fr),
   [*Input (username)*], [*Input (password)*], [*Expected output*], [*Reason*],
-  [4440000000],
-  [Correct corresponding password],
-  [ The app loads student full name and email address, and the main dashboard is shown. ],
-  [Testing successful authentication],
-
-  [bob],
-  [banana],
-  [Student portal displays error message and does not redirect the user to the web app],
-  [Testing non-existent accounts],
+  [4440000000], [Correct corresponding password], [ The main dashboard is shown ], [Testing successful authentication],
+  [bob], [banana], [ Error message: "Invalid username or password" ], [Testing non-existent accounts],
+  [4440000000], [banana], [ Error message: "Invalid username or password" ], [Testing incorrect password],
 )
+
+=== Sessions
+_Create session_
+#table(
+  columns: (1fr, 1fr, 1fr, 1fr, 1fr, 1fr),
+  [*Input (session type)*],
+  [*Input (start date and time)*],
+  [*Input (end date and time)*],
+  [*Input (Capacity)*],
+  [*Expected output*],
+  [*Reason*],
+
+  [Peer tutoring],
+  [30/08/2026 5:00pm],
+  [30/08/2026 5:30pm],
+  [2],
+  [ Error message: "Date must not be in the past" ],
+  [Testing cannot make past sessions],
+
+  [Peer tutoring],
+  [31/08/2026 5:00pm],
+  [31/08/2026 5:00pm],
+  [2],
+  [ Error message: "End time must be after start time" ],
+  [Testing cannot make zero-time session],
+
+  [Peer tutoring],
+  [31/08/2026 5:00pm],
+  [31/08/2026 4:00pm],
+  [2],
+  [ Error message: "End time must be after start time" ],
+  [Testing cannot make end before start],
+
+  [Peer tutoring],
+  [31/08/2026 5:00pm],
+  [31/08/2026 5:40pm],
+  [8],
+  [ Peer tutoring session is shown ],
+  [Testing can make peer tutoring up to 8 people],
+
+  [Peer tutoring],
+  [31/08/2026 5:00pm],
+  [31/08/2026 5:40pm],
+  [0],
+  [ Error message: "Capacity must be greater than 0" ],
+  [Testing capacity is a positive integer],
+
+  [Peer tutoring],
+  [31/08/2026 5:00pm],
+  [31/08/2026 5:40pm],
+  [-1],
+  [ Error message: "Capacity must be greater than 0" ],
+  [Testing capacity is a positive integer],
+
+  [Peer tutoring],
+  [31/08/2026 5:00pm],
+  [31/08/2026 5:40pm],
+  [9],
+  [ Error message: "Capacity must be at most 8" ],
+  [Testing peer tutoring capacity limit],
+
+  [Group study session],
+  [31/08/2026 5:00pm],
+  [31/08/2026 5:40pm],
+  [250],
+  [ Group study session shown ],
+  [Testing group study capacity limit],
+
+  [Group study session],
+  [31/08/2026 5:00pm],
+  [31/08/2026 5:40pm],
+  [251],
+  [ Error message: "Capacity must be at most 250" ],
+  [Testing group study capacity limit],
+)
+
+=== Resources
 
 
 

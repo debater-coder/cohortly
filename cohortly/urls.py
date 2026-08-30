@@ -21,6 +21,8 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path
 
+from cohortly import views
+
 urlpatterns = [
     path("", include("core.urls")),
     path("dashboard/", include("dashboard.urls")),
@@ -33,3 +35,7 @@ urlpatterns = [
 
 if settings.DEBUG is True:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+else:
+    urlpatterns.append(
+        path("/media-proxy/<str:name>", views.media_proxy, name="media-proxy")
+    )

@@ -47,6 +47,8 @@ INSTALLED_APPS = [
     "resources.apps.ResourcesConfig",
     "subjects.apps.SubjectsConfig",
     "tutoring.apps.TutoringConfig",
+    # Mail
+    "anymail",
     # Task queue
     "django_q",
     # Search
@@ -234,14 +236,24 @@ Q_CLUSTER = {
     "orm": "default",
 }
 
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_HOST = "smtp.gmail.com"
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = env("EMAIL_HOST_USER")
-EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD")
-DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+EMAIL_BACKEND = "anymail.backends.resend.EmailBackend"
+ANYMAIL = {
+    "RESEND_API_KEY": env("RESEND_API_KEY"),
+}
+DEFAULT_FROM_EMAIL = "no-reply@cohortly.timetabl.app"
 
 ADMINS = (("Hamzah Ahmed", "hamzah@syedahmed.net"),)
 
 SITE_URL = env("SITE_URL")
+
+if not DEBUG:
+    STORAGES = {
+        "default": {
+            "BACKEND": "storages.backends.s3.S3Storage",
+            "OPTIONS": {
+                "AWS_S3_ENDPOINT_URL": env("AWS_S3_ENDPOINT_URL"),
+                "AWS_S3_REGION_NAME": env("AWS_S3_REGION_NAME"),
+                "AWS_STORAGE_BUCKET_NAME": env("AWS_STORAGE_BUCKET_NAME"),
+            },
+        },
+    }

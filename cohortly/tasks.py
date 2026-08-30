@@ -3,6 +3,7 @@ Module containing background tasks that run in a separate worker cluster.
 """
 
 import hashlib
+import io
 
 import vt
 from django.conf import settings
@@ -21,7 +22,7 @@ def scan_file(file):
     Scans a given file for viruses using VirusTotal.
     """
     sha256_hash = hashlib.sha256()
-    with open(file.path, "rb") as f:
+    with file.open("rb") as f:
         for byte_block in iter(lambda: f.read(8192), b""):
             sha256_hash.update(byte_block)
     hash = sha256_hash.hexdigest()
@@ -35,8 +36,10 @@ def scan_file(file):
     except vt.APIError as e:
         if e.code == "NotFoundError":
             # Upload the file to VirusTotal to run a new scan
-            with open(file.path, "rb") as f:
-                analysis = client.scan_file(f, wait_for_completion=True)
+            with file.open("rb") as f:
+                analysis = client.scan_file(
+                    io.BytesIO(f.read()), wait_for_completion=True
+                )
                 return (
                     analysis.stats["suspicious"] == 0
                     and analysis.stats["malicious"] == 0

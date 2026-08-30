@@ -763,6 +763,20 @@ _Create session_
 
   [Group study session],
   [31/08/2026 5:00pm],
+  [31/08/2026 5:90pm],
+  [250],
+  [ Error message: "Invalid time" ],
+  [Testing invalid time],
+
+  [Group study session],
+  [32/08/2026 5:00pm],
+  [32/08/2026 5:30pm],
+  [250],
+  [ Error message: "Invalid date" ],
+  [Testing invalid date],
+
+  [Group study session],
+  [31/08/2026 5:00pm],
   [31/08/2026 5:40pm],
   [251],
   [ Error message: "Capacity must be at most 250" ],
@@ -771,7 +785,65 @@ _Create session_
 
 === Resources
 
+_Create resource_
+#table(
+  columns: (1fr, 1fr, 1fr, 1fr, 1fr),
+  [*Input (Resource title)*], [*Input (Description)*], [*Input (File upload)*], [*Expected output*], [*Reason*],
 
+  [], [Resource description], [-], [Error message: "Title cannot be blank"], [Testing blank title],
+  [Study resource], [ #lorem(15) ], [-], [Resource page is shown], [Testing creation of resource with no file],
+  [Study resource], [], [image.png], [Error message: File must be a valid PDF], [Testing upload of non-PDF],
+  [Study resource], [], [image.pdf], [Error mesage: File must be a valid PDF], [Testing upload of corrupted PDF],
+  [Study resource],
+  [],
+  [virus.pdf],
+  [Resource page with error message is shown: "This file has been flagged as a virus"],
+  [Testing virus scanning],
+
+  [Study resource], [], [-], [Error message: "Include either a file upload or description"], [Testing blank resource],
+)
+
+=== Questions page
+
+_Create question_
+#table(
+  columns: (1fr, 1fr, 1fr, 1fr),
+  [*Input (Question title)*], [*Input (Question body)*], [*Expected output*], [*Reason*],
+
+  [Test], [#lorem(15)], [Error message: "Title must be greater than or equal to 15 characters"], [Testing short title],
+
+  [15CharactersLen], [#lorem(15)], [Question page is shown], [Testing exactly 15 characters long title],
+
+  [How do I write good test data?],
+  [],
+  [Error message: "Description must be greater than or equal to 30 characters"],
+  [Testing blank description],
+
+  [How do I write good test data?],
+  [#lorem(15) `<IMG SRC=# onmouseover="alert('xxs')">`],
+  [Question page is shown with no image.],
+  [Testing sanitation of input data to thwart XSS attacks],
+
+  [How do I write good test data?],
+  [#lorem(15) `User drag and drops image`],
+  [Question page is shown with image.],
+  [Testing drag and drop of image],
+
+  [How do I write good test data?],
+  [#lorem(15) `User drag and drops PDF`],
+  [Question page is shown with no file.],
+  [Testing only images allowed on question page],
+
+  [How do I write good test data?],
+  [#lorem(15) `$ E = mc^2 $`],
+  [Question page is shown with equation: $ E = m c^2 $.],
+  [Testing formatting of mathematical equations],
+
+  [How do I write good test data?],
+  [`this is **bolded text** and _italics_`],
+  [Question page is shown with proper formatting ],
+  [Testing formatting of text in question (this is *bolded text* and _italics_)],
+)
 
 
 == Reccomendations

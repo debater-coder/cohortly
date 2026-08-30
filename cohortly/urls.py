@@ -37,5 +37,5 @@ if settings.DEBUG is True:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 else:
     urlpatterns.append(
-        path("/media-proxy/<str:name>", views.media_proxy, name="media-proxy")
+        path("media-proxy/<path:name>", views.media_proxy, name="media-proxy")
     )

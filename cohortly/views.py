@@ -5,7 +5,7 @@ from django.http.response import FileResponse
 
 
 @login_required
-def media_proxy(request, path):
-    if not default_storage.exists(path):
+def media_proxy(request, name):
+    if not default_storage.exists(name):
         raise Http404()
-    return FileResponse(default_storage.open(path, "rb"))
+    return FileResponse(default_storage.open(name, "rb"))

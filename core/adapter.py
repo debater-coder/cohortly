@@ -1,3 +1,5 @@
+from typing import override
+
 from allauth.account.adapter import DefaultAccountAdapter
 from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
 from allauth.socialaccount.models import SocialLogin
@@ -13,6 +15,9 @@ class SocialAccountAdapter(DefaultSocialAccountAdapter):
             connected_accounts = request.user.socialaccount_set.all()
             if connected_accounts.exists():
                 raise ValidationError("You can only link one social account.")
+
+    def is_open_for_signup(self, request: HttpRequest, sociallogin: SocialLogin):
+        return True
 
 
 class NoNewLocalUserAdapter(DefaultAccountAdapter):

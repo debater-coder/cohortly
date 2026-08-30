@@ -7,6 +7,8 @@ from subjects.models import Subject
 
 
 class Index(ListView):
+    """View that shows a list of the users' joined subjects on the dashboard, alongside the grade calendar."""
+
     model = Subject
     context_object_name = "subjects"
     template_name = "dashboard/index.html"
@@ -20,12 +22,15 @@ class Index(ListView):
 
 
 def profile_view(request):
+    """View that shows a user's profile"""
     return render(request, "dashboard/profile.html", {})
 
 
 def settings_view(request):
+    """View that shows user settings"""
     return render(request, "dashboard/settings.html", {})
 
 
 def help_view(request):
+    """View that shows the help centre"""
     return render(request, "dashboard/help.html", {})

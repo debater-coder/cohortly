@@ -11,11 +11,16 @@ def validate_not_in_past(value):
 
 
 class Session(models.Model):
+    """A group study or peer tutoring session."""
+
     created_at = models.DateTimeField(auto_now_add=True)
     location = models.CharField(max_length=1000)
+    # Maximum number of students who can join the session
     capacity = models.PositiveIntegerField(default=10)
     title = models.CharField(max_length=200)
+    # Peer tutoring sessions need join requests, while group study sessions are created by moderators and do not need join requests
     needs_join_requests = models.BooleanField(default=False)
+    # Whether the session is open to students to join
     open = models.BooleanField(default=True)
     host = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -47,15 +52,18 @@ class Session(models.Model):
         )
 
     def joined_participants(self):
+        """Returns a query set of students who have joined the session."""
         return self.participants.filter(status=SessionParticipant.Status.ACCEPTED)
 
     def pending_participants(self):
+        """Returns a query set of students who have pending join requests for the session."""
         return self.participants.filter(status=SessionParticipant.Status.PENDING)
 
     def __str__(self):
         return self.title
 
     def clean(self):
+        """Validates the session cannot have a capacity greater than 8 (for peer tutoring) and 250 (for group study)"""
         super().clean()
         max_capacity = 8 if self.needs_join_requests else 250
 
@@ -66,6 +74,8 @@ class Session(models.Model):
 
 
 class SessionParticipant(models.Model):
+    """Represents a student's join status in a session."""
+
     class Status(models.TextChoices):
         PENDING = "pending", "Pending"
         ACCEPTED = "accepted", "Accepted"
@@ -79,4 +89,5 @@ class SessionParticipant(models.Model):
     status = models.CharField(max_length=20, choices=Status.choices)
 
     class Meta:
+        # A student cannot have multiple join statuses for a session
         unique_together = ("session", "student")

@@ -10,6 +10,8 @@ from cohortly.markdown_utils import MARKDOWN_HELP_TEXT
 
 
 class Question(models.Model):
+    """Record for questions asked by students, associated with a particular subject and set of topics."""
+
     created_at = models.DateTimeField(auto_now_add=True)
     title = models.CharField(max_length=150, validators=[MinLengthValidator(15)])
     body = MarkdownxField(max_length=30000, help_text=MARKDOWN_HELP_TEXT)
@@ -29,6 +31,7 @@ class Question(models.Model):
         )
 
     def is_solved(self):
+        """Returns whether this question has any answer marked as the solution to the student's question."""
         return self.answer_set.filter(marked_as_solution=True).exists()
 
     def __str__(self) -> str:
@@ -36,6 +39,8 @@ class Question(models.Model):
 
 
 class Answer(models.Model):
+    """Record for answers to student questions, posted by other students in the subject."""
+
     created_at = models.DateTimeField(auto_now_add=True)
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     body = MarkdownxField(max_length=30000, help_text=MARKDOWN_HELP_TEXT)

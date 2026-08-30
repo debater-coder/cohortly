@@ -7,6 +7,8 @@ from subjects.models import SubjectMembership, Topic
 
 
 def is_moderator(view_func):
+    """Decorator that only allows accessing the view if the user is a moderator of the subject"""
+
     @wraps(view_func)
     def wrap(request, subject_pk: int, *args, **kwargs):
         membership = SubjectMembership.objects.filter(
@@ -22,6 +24,8 @@ def is_moderator(view_func):
 
 
 def is_member(view_func):
+    """Decorator that only allows accessing the view if the user is a member of the subject"""
+
     @wraps(view_func)
     def wrap(request, subject_pk: int, *args, **kwargs):
         membership = SubjectMembership.objects.filter(

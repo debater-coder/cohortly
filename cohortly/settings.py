@@ -42,7 +42,6 @@ INSTALLED_APPS = [
     # Cohortly
     "core.apps.CoreConfig",
     "dashboard.apps.DashboardConfig",
-    "credits.apps.CreditsConfig",
     "qa.apps.QaConfig",
     "resources.apps.ResourcesConfig",
     "subjects.apps.SubjectsConfig",

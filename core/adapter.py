@@ -6,6 +6,8 @@ from django.http import HttpRequest
 
 
 class SocialAccountAdapter(DefaultSocialAccountAdapter):
+    """Django Allauth adapter that prevents more than one connected SBHS account."""
+
     def pre_social_login(self, request: HttpRequest, sociallogin: SocialLogin) -> None:
         if request.user.is_authenticated:
             connected_accounts = request.user.socialaccount_set.all()
@@ -14,5 +16,7 @@ class SocialAccountAdapter(DefaultSocialAccountAdapter):
 
 
 class NoNewLocalUserAdapter(DefaultAccountAdapter):
+    """Django Allauth adapter that prevents creation of new local users."""
+
     def is_open_for_signup(self, request: HttpRequest) -> bool:
         return False

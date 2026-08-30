@@ -1,3 +1,7 @@
+"""
+Module containing background tasks that run in a separate worker cluster.
+"""
+
 import hashlib
 
 import vt
@@ -13,12 +17,16 @@ client = vt.Client(env("VIRUS_TOTAL_API_KEY"))
 
 
 def scan_file(file):
+    """
+    Scans a given file for viruses using VirusTotal.
+    """
     sha256_hash = hashlib.sha256()
     with open(file.path, "rb") as f:
         for byte_block in iter(lambda: f.read(8192), b""):
             sha256_hash.update(byte_block)
     hash = sha256_hash.hexdigest()
     try:
+        # Check the file's hash against VirusTotal's existing database
         file_obj = client.get_object(f"/files/{hash}")
         return (
             file_obj.last_analysis_stats["suspicious"] == 0
@@ -26,6 +34,7 @@ def scan_file(file):
         )
     except vt.APIError as e:
         if e.code == "NotFoundError":
+            # Upload the file to VirusTotal to run a new scan
             with open(file.path, "rb") as f:
                 analysis = client.scan_file(f, wait_for_completion=True)
                 return (
@@ -37,6 +46,7 @@ def scan_file(file):
 
 
 def scan_resource(resource_id):
+    """Scans the file attached to a resource for viruses using VirusTotal"""
     resource = Resource.objects.get(id=resource_id)
     try:
         result = scan_file(resource.content)
@@ -57,6 +67,7 @@ def scan_resource(resource_id):
 
 
 def send_session_reminder(session_id):
+    """Sends a reminder email to all participants of a session"""
     session = Session.objects.get(id=session_id)
 
     participants = session.participants.filter(

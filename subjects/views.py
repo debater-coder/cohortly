@@ -26,6 +26,8 @@ from tutoring.models import Session
 
 
 class SubjectsListView(ListView):
+    """View that displays the full subjects list."""
+
     model = Subject
     context_object_name = "subjects"
 
@@ -45,6 +47,8 @@ class SubjectsListView(ListView):
 
 
 class SubjectDetailView(DetailView):
+    """View that shows a specific subject in detail."""
+
     model = Subject
     context_object_name = "subject"
     pk_url_kwarg = "subject_pk"
@@ -60,6 +64,8 @@ class SubjectDetailView(DetailView):
 
 
 class TopicAutocompleteView(AutocompleteModelView):
+    """View used by topic autocomplete selectors to allow live filtering of topics when a user selects a topic."""
+
     model = Topic
     search_lookups = ["name__icontains", "description__icontains"]
     virtual_fields = ["path"]
@@ -76,6 +82,8 @@ class TopicAutocompleteView(AutocompleteModelView):
 
 
 class TopicForm(ModelForm):
+    """Form for creating or editing a topic."""
+
     required_css_class = "field-required"
 
     class Meta:
@@ -108,6 +116,7 @@ class TopicForm(ModelForm):
 
 
 def topic_list_view(request, subject_pk):
+    """View that displays a list of topics for that subject"""
     subject = get_object_or_404(Subject, pk=subject_pk)
     membership = (
         SubjectMembership.objects.filter(user=request.user, subject=subject).first()
@@ -124,6 +133,7 @@ def topic_list_view(request, subject_pk):
 
 
 def topic_detail_view(request, subject_pk, topic_pk):
+    """View that displays a specific topic in detail."""
     subject = get_object_or_404(Subject, pk=subject_pk)
     topic = get_object_or_404(Topic, pk=topic_pk)
 
@@ -166,6 +176,7 @@ def topic_detail_view(request, subject_pk, topic_pk):
 
 @is_moderator
 def topic_create_view(request, subject_pk: int):
+    """View for creating a new topic (moderator only)"""
     subject = get_object_or_404(Subject, pk=subject_pk)
     preset_topic = Topic(subject_id=subject_pk)
     form = TopicForm(request.POST or None, instance=preset_topic, subject_id=subject_pk)
@@ -183,6 +194,7 @@ def topic_create_view(request, subject_pk: int):
 
 @is_moderator
 def topic_reorder_view(request, subject_pk: int):
+    """View for reordering a topic by drag and drop (moderator only)"""
     template = "subjects/topic_reorder.html"
 
     if request.htmx:
@@ -239,6 +251,7 @@ def topic_edit_view(
     subject_pk: int,
     topic_pk: int,
 ):
+    """View to edit an existing topic (moderator only)."""
     subject = get_object_or_404(Subject, pk=subject_pk)
     topic = get_object_or_404(Topic, pk=topic_pk)
     form = TopicForm(request.POST or None, instance=topic, subject_id=subject_pk)
@@ -261,6 +274,7 @@ def topic_delete(
     subject_pk: int,
     topic_pk: int,
 ):
+    """Delete an existing topic (moderator only)."""
     topic = get_object_or_404(Topic, pk=topic_pk)
     membership = get_object_or_404(
         SubjectMembership, subject_id=topic.subject.id, user=request.user
@@ -277,6 +291,7 @@ def topic_delete(
 
 @require_POST
 def subject_toggle_membership(request, subject_pk: int):
+    """Toggles whether a student is a member of a subject."""
     subject = get_object_or_404(Subject, pk=subject_pk)
     membership, created = SubjectMembership.objects.get_or_create(
         subject=subject, user=request.user

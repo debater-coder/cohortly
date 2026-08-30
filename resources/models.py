@@ -7,6 +7,7 @@ from django.shortcuts import reverse
 
 
 def validate_file_size(file):
+    """Validates that a file is below 10MB in size"""
     max_size_kb = 10240  # 10MB
     if file.size > max_size_kb * 1024:
         raise ValidationError(f"File size exceeds {max_size_kb} KB")
@@ -24,7 +25,11 @@ def validate_pdf(file):
 
 
 class Resource(models.Model):
+    """An uploaded resource"""
+
     class ScanStatus(models.TextChoices):
+        """The status of the background task that scans the file for viruses"""
+
         PENDING = "pending", "Pending scan"
         CLEAN = "clean", "Clean"
         INFECTED = "infected", "Infected"

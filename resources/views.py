@@ -16,10 +16,13 @@ from subjects.utils import is_member
 
 
 def can_modify_resource(resource, user, membership):
+    """Returns whether the user can modify a resource (either they are a moderator or the original uploader)"""
     return (membership and membership.moderator) or (resource.uploader == user)
 
 
 class ResourceForm(ModelForm):
+    """Form for creating or editing a resource."""
+
     required_css_class = "field-required"
 
     class Meta:
@@ -66,6 +69,10 @@ class ResourceForm(ModelForm):
 
 
 def resources_list_view(request, subject_pk: int):
+    """
+    View that displays a list of resources (that are confirmed clean by virus
+    scanner), ordered in descending order of upvotes.
+    """
     subject = get_object_or_404(Subject, pk=subject_pk)
 
     resources = (
@@ -89,7 +96,7 @@ def resources_list_view(request, subject_pk: int):
 
 
 def scan_resource_if_needed(resource: Resource):
-    """Scans a resource if it contains a file"""
+    """Starts a background task to scan a resource if it contains a file."""
     if resource.content:
         resource.scan_status = Resource.ScanStatus.PENDING
         # Scan file
@@ -101,6 +108,7 @@ def scan_resource_if_needed(resource: Resource):
 
 
 def resources_upload_view(request, subject_pk: int):
+    """View to create a new resource after which it will be scanned if necessary."""
     subject = get_object_or_404(Subject, pk=subject_pk)
 
     membership = SubjectMembership.objects.filter(
@@ -130,13 +138,14 @@ def resources_upload_view(request, subject_pk: int):
 
 
 def resource_detail_view(request, subject_pk: int, resource_pk: int):
+    """View that displays a specific resource."""
     subject = get_object_or_404(Subject, pk=subject_pk)
     membership = SubjectMembership.objects.filter(
         user=request.user, subject=subject
     ).first()
 
     resource = get_object_or_404(Resource, pk=resource_pk)
-    #
+
     # Hide resources not from this user that are not confirmed to be clean of viruses
     if (
         resource.scan_status != Resource.ScanStatus.CLEAN
@@ -161,6 +170,7 @@ def resource_detail_view(request, subject_pk: int, resource_pk: int):
 
 
 def resources_edit_view(request, subject_pk: int, resource_pk: int):
+    """View for editing a resource, after which it will be scanned if necessary."""
     subject = get_object_or_404(Subject, pk=subject_pk)
     resource = get_object_or_404(Resource, pk=resource_pk)
 
@@ -190,6 +200,7 @@ def resources_edit_view(request, subject_pk: int, resource_pk: int):
 
 @require_POST
 def resource_delete(request, subject_pk: int, resource_pk: int):
+    """Deletes a resource if the user can modify it."""
     subject = get_object_or_404(Subject, pk=subject_pk)
     resource = get_object_or_404(Resource, subject_id=subject_pk, pk=resource_pk)
 
@@ -215,6 +226,7 @@ def resource_delete(request, subject_pk: int, resource_pk: int):
 @is_member
 @require_POST
 def resource_upvote(request, subject_pk: int, resource_pk: int):
+    """Upvotes a resource."""
     get_object_or_404(Subject, pk=subject_pk)
     resource = get_object_or_404(Resource, subject_id=subject_pk, pk=resource_pk)
 

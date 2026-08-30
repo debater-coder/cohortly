@@ -64,6 +64,8 @@ def query_group_or_joined(user):
 
 
 class SessionForm(ModelForm):
+    """Form for creating or editing a study session."""
+
     required_css_class = "field-required"
 
     class Meta:
@@ -124,6 +126,8 @@ class SessionForm(ModelForm):
 
 
 def session_list_view(request, subject_pk: int):
+    """View that displays a list of the students' upcoming sessions, a calendar for their sessions in the subject, and a list
+    of peer tutoring sessions they can join."""
     subject = get_object_or_404(Subject, pk=subject_pk)
     membership = SubjectMembership.objects.filter(
         user=request.user, subject=subject
@@ -154,6 +158,7 @@ def session_list_view(request, subject_pk: int):
 
 
 def new_group_study_session_view(request, subject_pk: int):
+    """Moderator only view to create a new group study session"""
     subject = get_object_or_404(Subject, pk=subject_pk)
     membership = SubjectMembership.objects.filter(
         user=request.user, subject=subject
@@ -190,6 +195,7 @@ def new_group_study_session_view(request, subject_pk: int):
 
 @is_member
 def new_tutoring_session_view(request, subject_pk: int):
+    """View to create a new peer tutoring session."""
     subject = get_object_or_404(Subject, pk=subject_pk)
 
     preset_session = Session(
@@ -221,12 +227,14 @@ def new_tutoring_session_view(request, subject_pk: int):
 
 
 def can_modify_session(session, user, membership):
+    """Returns whether the student can modify a session"""
     return (membership and membership.moderator) or (
         session.needs_join_requests and session.host == user
     )
 
 
 def session_detail_view(request, subject_pk: int, session_pk: int):
+    """View that shows details of a specific session."""
     subject = get_object_or_404(Subject, pk=subject_pk)
     membership = SubjectMembership.objects.filter(
         user=request.user, subject=subject
@@ -257,6 +265,7 @@ def session_detail_view(request, subject_pk: int, session_pk: int):
 
 
 def session_edit_view(request, subject_pk: int, session_pk: int):
+    """View for editing a specific session."""
     subject = get_object_or_404(Subject, pk=subject_pk)
     membership = SubjectMembership.objects.filter(
         user=request.user, subject=subject
@@ -284,6 +293,7 @@ def session_edit_view(request, subject_pk: int, session_pk: int):
 @require_POST
 @is_member
 def session_delete(request, subject_pk: int, session_pk: int):
+    """View for deleting a specific session"""
     subject = get_object_or_404(Subject, pk=subject_pk)
     session = get_object_or_404(Session, subject_id=subject_pk, pk=session_pk)
 
@@ -310,6 +320,16 @@ def session_delete(request, subject_pk: int, session_pk: int):
 @require_POST
 @is_member
 def session_join(request, subject_pk: int, session_pk: int):
+    """
+    Joins or removes a student from a session.
+
+    # If the session is open and they have not already joined:
+    For peer tutoring sessions: the student's join status is PENDING, until the host accepts
+    For group study session: the student's join status is immediately ACCEPTED
+
+    # If they already have a participation in the session
+    The student is removed from the session
+    """
     subject = get_object_or_404(Subject, pk=subject_pk)
     session = get_object_or_404(Session, subject_id=subject_pk, pk=session_pk)
 
@@ -439,6 +459,7 @@ def get_participation_for_modify(
 def accept_join_request(
     request, subject_pk: int, session_pk: int, participation_pk: int
 ):
+    """Accepts a student's participation into a session (for peer tutoring)"""
     session, participation = get_participation_for_modify(
         request.user, subject_pk, session_pk, participation_pk
     )
@@ -465,6 +486,7 @@ def accept_join_request(
 def reject_join_request(
     request, subject_pk: int, session_pk: int, participation_pk: int
 ):
+    """Declines a student's participation into a session (for peer tutoring)"""
     participation = get_participation_for_modify(
         request.user, subject_pk, session_pk, participation_pk
     )

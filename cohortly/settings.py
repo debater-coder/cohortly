@@ -256,4 +256,7 @@ if not DEBUG:
                 "AWS_STORAGE_BUCKET_NAME": env("AWS_STORAGE_BUCKET_NAME"),
             },
         },
+        "staticfiles": {
+            "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+        },
     }

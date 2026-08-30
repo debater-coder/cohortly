@@ -961,22 +961,28 @@ Students should be able to:#emoji.checkmark.box
 of validation.*
 
 ==== Points system
-+ Students should be able to upvote resources, Q&A, and study sessions to indicate that they were helpful
-+ After a study sessions, participants should be able to provide anonymous feedback on a study session, including:
++ Students should be able to upvote resources, Q&A, and study sessions to indicate that they were helpful#sym.ballot.cross
++ After a study sessions, participants should be able to provide anonymous feedback on a study session, including:#sym.ballot.cross
   - A rating out of 5
   - General feedback
-+ The system should provide students with *contribution credits* for participating, with higher credit amounts for more helpful activities
-+ The system should display a leaderboard for the students with the highest credit amounts
++ The system should provide students with *contribution credits* for participating, with higher credit amounts for more helpful activities#sym.ballot.cross
++ The system should display a leaderboard for the students with the highest credit amounts#sym.ballot.cross
+
+*None of this was implemented due to time limitations*
 
 === Non-Functional
 ==== Usability
-+ The system must be functional on desktop an mobile devices
-+ The most commonly used actions must be easy to access intuitively
-+ The interface must be consistent
-+ There must be a help page to explain more complex processes (such as moderation, the contribution credits system, etc.)
++ The system must be functional on desktop an mobile devices#emoji.checkmark.heavy (Partial)
++ The most commonly used actions must be easy to access intuitively#emoji.checkmark.box
++ The interface must be consistent#emoji.checkmark.box
++ There must be a help page to explain more complex processes (such as moderation, the contribution credits system, etc.)#emoji.checkmark.box
+
+*The system is designed primarily for desktop, and while it is usable on mobile it is not specifically optimised for it.*
+
+
 ==== Security and Privacy
-+ Only students or teachers logged in through the school portal should be able to view any data within the system
-+ Uploaded content should be automatically scanned with VirusTotal and restricted to safe formats
++ Only students or teachers logged in through the school portal should be able to view any data within the system#emoji.checkmark.box
++ Uploaded content should be automatically scanned with VirusTotal and restricted to safe formats#emoji.checkmark.box
 
 
 #import "@preview/numbly:0.1.0": numbly

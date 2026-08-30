@@ -846,12 +846,137 @@ _Create question_
 )
 
 
-== Reccomendations
+=== Reccomendations
 This system passes preliminary testing of the main cases, as well as some user inputs
 designed to test input santisiation and resistance to XSS attacks. However, this testing
 methodology lacks more sophisticated testing such as load testing, automated fuzzing (DAST),
 and testing for race conditions. These tests should be perfomred before installation of the
 system.
+
+== Evaluation
+
++ The system should allow teachers and students to log in using the school portal system #emoji.checkmark.heavy (Partial)
+
+*Students can log in but teacher support was dropped due to time limitations*
+
+The system should allow students to:
+- Post Q&As #emoji.checkmark.box
+- Schedule or join sessions #emoji.checkmark.box
+- Share resources #emoji.checkmark.box
+- Set peer tutoring availability #emoji.checkmark.box
+
+*All of these features are fully implemented*
+
+The system should allow moderators to:
+- Remove inappropriate or irrelevant content #emoji.checkmark.box
+- Review flags for out-of-syllabus or disputed material #sym.ballot.cross
+- Add subtopics to subjects #emoji.checkmark.box
+
+*Essential moderation features such as removing and editing content as well as creating and modifying subtopics
+was implemented, but more advanced moderation features were omitted due to time limitations.*
+
+The system should allow system administrators to:
+- Add or remove moderators #emoji.checkmark.box
+- Create and manage subjects #emoji.checkmark.box
+
+*This was fully implemented (admin dashboard).*
+
+The system should allow teachers only to:
+- View statistics on platform use (contribution credits) and student topic mastery ratings #sym.ballot.cross
+
+*Teacher access was not implemented.*
+
+==== Scheduling and Study Sessions
+Students should be able to view public study sessions/tutoring sessions, and filter by: #emoji.checkmark.heavy (Partial)
+- Subject
+- Host (tutor or subject moderator)
+- Date/time
+- Sessions should show:
+- Subject or topic
+- Session title and description
+- Date and time
+- Meeting link or location
+- Host (student or moderator)
+- Participant list
+- Maximum capacity
+
+*All of these features are implemented and are able to be viewed and searched by, but advanced filtering
+by these properties was not implemented.*
+
+Students should be able to:
+- Set availability as a peer tutor: #emoji.checkmark.box
+- Set availability for tutoring sessions #emoji.checkmark.box
+- Set size (max number of students) of session #emoji.checkmark.box
+- Accept or decline requests #emoji.checkmark.box
+
+*This was fully implemented.*
+
+Subject moderators should be able to create general study sessions: #emoji.checkmark.box
+- General study sessions timing is decided by scheduling polls #sym.ballot.cross
+Students should be able to vote in scheduling polls: #sym.ballot.cross
+- Students vote for their available times, and the most popular time slot is chosen #sym.ballot.cross
+
+*While general study sessions were implemented, the polling feature was omitted due to time limitations.*
+==== Topic Hierarchy
+The system should represent topics in a hiearchical way:#emoji.checkmark.box
+- Topics are associated with a subject, and topics can have sub-topics corresponding to increasing detail
+Students should be able to vote on the difficulty and mastery (how much they understand) of a topic#sym.ballot.cross
+Teachers should be able to view aggregated statistics on difficulty and mastery metrics#sym.ballot.cross
+
+*While the topic hierarchy can be created and modified by moderators, difficulty rating was not implemented.*
+
+==== Moderation
+Students should be able to flag content as:#sym.ballot.cross
+- Inappropriate
+- Out of syllabus
+- Disputed
+Moderators should be able to see a queue of flagged content, and choose an action (accept flag/delete/reject flag)#sym.ballot.cross
+The system should store all moderator actions in an audit log, so moderator actions are held accountable to the moderator#sym.ballot.cross
+
+*Moderators can manually edit or remove harmful content but these advanced moderation features were not implmented.
+At the scale of a student cohort where students' names are associated with their actions, the moderation problem
+is far more tractable so these were not as important.*
+
+==== Q&A
+Students should be able to:#emoji.checkmark.box
+- Post questions, associated with a topic in the topic hierarchy
+- Respond with answers
+- Flag a question
+
+*These were fully implemented*
+==== Resource Sharing
++ To share notes, worksheets and study materials, students should be able to:#emoji.checkmark.box
+  - Share links
+  - Upload files
++ The system should tag resources with:#emoji.checkmark.box
+  - Subject
+  - Topic
+  - Uploader
+  - Upload date
++ The system must scan uploaded files with VirusTotal API or similar#emoji.checkmark.box
++ The system must limit to safe file formats (PDF, DOCX, PPTX, etc.)#emoji.checkmark.heavy (Partial)
++ Students should be able to flag resources#emoji.checkmark.box
+
+*This was fully implemented except resources can only either be PDF or link to external content (eg Google Docs), for ease
+of validation.*
+
+==== Points system
++ Students should be able to upvote resources, Q&A, and study sessions to indicate that they were helpful
++ After a study sessions, participants should be able to provide anonymous feedback on a study session, including:
+  - A rating out of 5
+  - General feedback
++ The system should provide students with *contribution credits* for participating, with higher credit amounts for more helpful activities
++ The system should display a leaderboard for the students with the highest credit amounts
+
+=== Non-Functional
+==== Usability
++ The system must be functional on desktop an mobile devices
++ The most commonly used actions must be easy to access intuitively
++ The interface must be consistent
++ There must be a help page to explain more complex processes (such as moderation, the contribution credits system, etc.)
+==== Security and Privacy
++ Only students or teachers logged in through the school portal should be able to view any data within the system
++ Uploaded content should be automatically scanned with VirusTotal and restricted to safe formats
 
 
 #import "@preview/numbly:0.1.0": numbly
@@ -863,5 +988,3 @@ system.
   ),
   supplement: [],
 )
-
-= Summary of survey results

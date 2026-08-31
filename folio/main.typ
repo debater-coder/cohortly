@@ -1035,3 +1035,38 @@ of validation.*
   ),
   supplement: [],
 )
+
+= Summary of survey results
+Responses from 42 HSC students.
+#image("images/survey1.png")
+#image("images/survey2.png")
+
+*Factors holding back students from participating in peer study:*
+- Finding other people willing to study
+- Scheduling study times
+- Staying on topic
+- Availability of study sessions
+*Features ranking:*
+#table(
+  columns: (1fr, auto),
+  [*Feature (sorted by average rank)*], [*Average Rank (lower number means more important)*],
+  [Scheduling group study sessions], [84],
+  [Scheduling 1:1 peer tutoring], [107],
+  [Adding links to shared documents/document upload], [129],
+  [Questions and answer forum/wiki], [132],
+  [ Printing of edited Q&A], [179],
+)
+
+*Factors that influenced ranking:*
+- Scheduling group sessions is essential to align availability between students
+- People disagree on the importance of groups vs. 1:1 sessions, some people find 1:1s to be inefficient, others find 1:1 really important for targeted catchup and to avoid getting off-task
+- People prefer having actual catchup sessions compared to static resources (textbook exists)
+- Q&A is good for quick help when don’t know who to ask
+- Students dislike printing since they use digital resources for everything else anyway
+*Additional suggestions:*
+- Shared resource bank
+- Point system to reward those who contribute, to acknowledge the most helpful students (incentive)
+- Past paper review sessions (students do the same paper and review solutions together)
+- Voting on what topics are confusing
+- Messaging integration (i.e connect to discord)
+- Classroom booking (likely out of scope however)

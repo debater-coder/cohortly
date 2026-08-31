@@ -151,7 +151,7 @@ def session_list_view(request, subject_pk: int):
             "membership": membership,
             "upcoming_sessions": upcoming_sessions,
             "upcoming_tutoring_sessions": Session.objects.filter(
-                query_upcoming_tutoring_sessions()
+                query_upcoming_tutoring_sessions() & Q(subject=subject)
             ),
         },
     )

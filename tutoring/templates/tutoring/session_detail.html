@@ -106,7 +106,7 @@
             <th scope="row">{% if session.needs_join_requests %}Peer tutoring{% else %}Group study{% endif %}</th>
         </tr>
     </table>
-    {% if can_modify %}
+    {% if session.host == request.user %}
         <hr>
         <h2>Pending participants</h2>
         {% for participant in pending_participants %}

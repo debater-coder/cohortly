@@ -574,6 +574,30 @@ topic more quickly, and supports using the Backspace key to remove a topic selec
 standard Tab key navigation in forms, this allows power users to much more efficiently navigate the
 user interface.
 
+==== Detailed breakdown
+===== Login
+#image("images/screenshots/Major project annotations.png")
+===== Dashboard
+#image("images/screenshots/Major project annotations(1).png")
+===== Subjects list
+#image("images/screenshots/Major project annotations(2).png")
+===== Subject dashboard
+#image("images/screenshots/Major project annotations(3).png")
+===== Topic page
+#image("images/screenshots/Major project annotations(4).png")
+===== Questions list
+#image("images/screenshots/Major project annotations(5).png")
+===== Questions page
+#image("images/screenshots/Major project annotations(6).png")
+===== Sessions list
+#image("images/screenshots/Major project annotations(7).png")
+===== Sessions page
+#image("images/screenshots/Major project annotations(8).png")
+===== Resource list
+#image("images/screenshots/Major project annotations(9).png")
+===== Resource page
+#image("images/screenshots/Major project annotations(10).png")
+
 
 = Producing and Implementing
 == Logbook
@@ -887,11 +911,11 @@ _Create question_
 )
 
 
-=== Reccomendations
+=== Recommendations
 This system passes preliminary testing of the main cases, as well as some user inputs
 designed to test input santisiation and resistance to XSS attacks. However, this testing
 methodology lacks more sophisticated testing such as load testing, automated fuzzing (DAST),
-and testing for race conditions. These tests should be perfomred before installation of the
+and testing for race conditions. These tests should be performed before installation of the
 system.
 
 == Evaluation
@@ -1024,6 +1048,25 @@ of validation.*
 ==== Security and Privacy
 + Only students or teachers logged in through the school portal should be able to view any data within the system#emoji.checkmark.box
 + Uploaded content should be automatically scanned with VirusTotal and restricted to safe formats#emoji.checkmark.box
+
+
+=== Recommendations
+
+The work done here sets a foundation for effective collaboration between
+students in a cohort. However, before a full-scale deployment to an entire grade
+is feasible, there is future work that would need to build on this foundation.
+Particularly:
+
+- Proper load testing and optimisation to ensure that the system is economically feasible to run for an entire cohort
+- Having features to allow future grades to inherit the the resources and topic hierarchy created by a prior year. This
+  would reduce duplicate work by moderators, and could be implemented using an import/export feature.
+- Use of audit logging to track moderator actions so that an administrator could hold them accountable
+- A basic flagging feature (while the full-scale moderation queue feature set out in the specifications is not necessary
+  even for a cohort of 210 students, basic flagging ability is necessary to allow moderators to quickly respond to abuse)
+- More extensive filtering and pagination features to allow better navigation of questions, resources and sessions
+  when there are potentially hundreds of them in a particular subject.
+
+
 
 
 #import "@preview/numbly:0.1.0": numbly

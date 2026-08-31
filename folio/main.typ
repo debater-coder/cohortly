@@ -528,11 +528,52 @@ END SessionsSearch
 Zoom for detail.
 === Interface Design
 ==== Consistency
-==== Responsive Web Design
+Consistency was a highly valued design element in Cohortly. All interactible buttons
+are rounded box in one of two colours: blue for primary actions and grey for secondary actions.
+Buttons also work similarly in other software, so Cohortly is not only internally consistent
+but also externally consistent with other software the user is likely to have been used, allowing
+them to learn it more efficiently.
+#image("images/screenshots/buttons.png")
+
 ==== Navigation
-==== Grouping
-==== Effective use of colour
-==== Accessibility
+Consistent navigation on every logged-in page allows for users to learn the navigation system once,
+and quickly use it to move between pages without having to relearn navigation for different areas of
+the interface.
+
+For example, the "breadcrumb" pattern was used (a list of links forming a hierarchy), where a user
+can click on any of the links in the breadcrumbs to quickly return to a specific page in the hierarchy.
+#image("images/screenshots/breadcrumbs.png")
+
+Above the breadcrumbs is a consistent navigation bar, including a link to the
+help center, account details and a universal search bar. The search bar provides
+another way to navigate. Because the search bar is universal (across all content
+hosted by Cohortly), it can be used to quickly find a particular piece of content
+(a question, answer, topic, subject, resource or session) without needing to manually
+navigate the the particular list containing that page. Because Cohortly is designed
+to host such a large amount of content, it is necessary to have this feature to make
+this navigable.
+
+#image("images/screenshots/search-page.png")
+
+==== Forgiveness
+In interface design, forgiveness refers to design decisions that are designed to make
+the system resistant to human error. For example, confirmation is sought before performing
+potentially destructive actions, such as leaving a subject or deleting some content.
+#image("images/screenshots/forgiveness.png")
+
+==== Efficiency of use
+In Cohortly, efficiency of use is important in allowing moderators to perform their tasks
+more efficiently. Subject syllabuses have many dozens of subtopics, so it is important that
+the interface is quick to navigate and use. An example of this is the selection of subtopics
+throughout the interface, where a dropdown with a filtered search is used to allow for quicker
+selection of a subtopic where there may be dozens.
+
+#image("images/screenshots/topic-select.png")
+Additionally, this topic select supports using the Up and Down arrow keys to select a particular
+topic more quickly, and supports using the Backspace key to remove a topic selection. Alongside
+standard Tab key navigation in forms, this allows power users to much more efficiently navigate the
+user interface.
+
 
 = Producing and Implementing
 == Logbook

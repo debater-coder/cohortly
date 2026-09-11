@@ -1,3 +1,4 @@
+from auditlog.registry import auditlog
 from django.conf import settings
 from django.db import models
 from django.shortcuts import reverse
@@ -23,6 +24,9 @@ class Subject(models.Model):
         return self.name
 
 
+auditlog.register(Subject)
+
+
 class SubjectMembership(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
@@ -37,6 +41,9 @@ class SubjectMembership(models.Model):
                 fields=["user", "subject"], name="unique_user_subject"
             )
         ]
+
+
+auditlog.register(SubjectMembership)
 
 
 class Topic(models.Model):
@@ -71,3 +78,6 @@ class Topic(models.Model):
             descendants.extend(child.get_all_descendants())
 
         return descendants
+
+
+auditlog.register(Topic)

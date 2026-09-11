@@ -1,4 +1,5 @@
 import puremagic
+from auditlog.registry import auditlog
 from django.conf import settings
 from django.core.validators import FileExtensionValidator
 from django.db import models
@@ -70,3 +71,6 @@ class Resource(models.Model):
         return reverse(
             "subjects:resources:resource-detail", args=(self.subject.id, self.id)
         )
+
+
+auditlog.register(Resource)

@@ -1,3 +1,4 @@
+from auditlog.registry import auditlog
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -91,3 +92,7 @@ class SessionParticipant(models.Model):
     class Meta:
         # A student cannot have multiple join statuses for a session
         unique_together = ("session", "student")
+
+
+auditlog.register(Session)
+auditlog.register(SessionParticipant)

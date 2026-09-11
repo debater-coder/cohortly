@@ -47,6 +47,8 @@ INSTALLED_APPS = [
     "resources.apps.ResourcesConfig",
     "subjects.apps.SubjectsConfig",
     "tutoring.apps.TutoringConfig",
+    # Audit
+    "auditlog",
     # Mail
     "anymail",
     # Task queue
@@ -78,6 +80,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    "auditlog.middleware.AuditlogMiddleware",
     "django_htmx.middleware.HtmxMiddleware",
     "django_tomselect.middleware.TomSelectMiddleware",
     "debug_toolbar.middleware.DebugToolbarMiddleware",

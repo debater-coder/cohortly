@@ -1,5 +1,6 @@
 from turtle import ondrag
 
+from auditlog.registry import auditlog
 from django.conf import settings
 from django.core.validators import MinLengthValidator
 from django.db import models
@@ -38,6 +39,9 @@ class Question(models.Model):
         return self.title
 
 
+auditlog.register(Question)
+
+
 class Answer(models.Model):
     """Record for answers to student questions, posted by other students in the subject."""
 
@@ -61,3 +65,6 @@ class Answer(models.Model):
             )
             + f"#answer-header-{self.id}"
         )
+
+
+auditlog.register(Answer)

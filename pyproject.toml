@@ -9,6 +9,7 @@ dependencies = [
     "django>=6.0.7",
     "django-allauth[socialaccount]>=65.18.0",
     "django-anymail[resend]>=15.1",
+    "django-auditlog>=3.4.1",
     "django-debug-toolbar>=7.0.0",
     "django-environ>=0.14.0",
     "django-haystack>=3.4.0",

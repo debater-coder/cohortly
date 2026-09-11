@@ -80,7 +80,6 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    "auditlog.middleware.AuditlogMiddleware",
     "django_htmx.middleware.HtmxMiddleware",
     "django_tomselect.middleware.TomSelectMiddleware",
     "debug_toolbar.middleware.DebugToolbarMiddleware",
@@ -94,6 +93,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "allauth.account.middleware.AccountMiddleware",
+    "auditlog.middleware.AuditlogMiddleware",
 ]
 
 ROOT_URLCONF = "cohortly.urls"
